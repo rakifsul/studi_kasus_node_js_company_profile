@@ -44,7 +44,7 @@ exports.up = function (knex) {
             table.increments("_id");
             table.string("title", 1000).notNullable();
             table.string("description", 1000).notNullable();
-            table.string("svg", 1000).notNullable();
+            table.string("svg", 10000).notNullable();
             table.timestamps(true, true, true);
         })
         .createTable("portfolios", function (table) {
