@@ -2,13 +2,11 @@
 
 ## Software Apakah Ini?
 
-shb-nd-ejs-company-profile adalah website company profile yang bisa di-edit di panel admin.
+shb-nd-ejs-company-profile adalah website company profile yang bisa di-edit di panel admin...
 
-## Screenshot
+## Cara Kerja
 
-![ScreenShot](.readme-assets/shb-nd-ejs-company-profile-1.png?raw=true)
-
-![ScreenShot](.readme-assets/shb-nd-ejs-company-profile-2.png?raw=true)
+Aplikasi ini bekerja seperti company profile pada umumnya, hanya saja ada beberapa fitur tambahan seperti admin panel.
 
 ## Cara Mencoba Kode Ini
 
@@ -47,14 +45,9 @@ username: admin@example.com
 password: admin
 ```
 
-## Pendahuluan
+## Screenshot
 
-Kali ini, saya akan memberikan contoh website company profile dengan Node.js.
+![ScreenShot](.readme-assets/shb-nd-ejs-company-profile-1.png?raw=true)
 
-## Cara Kerja
+![ScreenShot](.readme-assets/shb-nd-ejs-company-profile-2.png?raw=true)
 
-Aplikasi ini bekerja seperti company profile pada umumnya, hanya saja ada beberapa fitur tambahan seperti admin panel.
-
-## Struktur Project
-
-Untuk melihat struktur project aplikasi ini, silakan buka project ini di text editor.
