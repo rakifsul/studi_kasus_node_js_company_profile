@@ -120,7 +120,6 @@ module.exports.getMessagesDelete = async function (req, res, next) {
             })
             .del();
 
-        // redirect ke /admin/messages
         res.redirect("/admin/messages");
     } catch (err) {
         console.log(err);
@@ -223,7 +222,6 @@ module.exports.getSkillsDelete = async function (req, res, next) {
             })
             .del();
 
-        // redirect ke /admin/skills
         res.redirect("/admin/skills");
     } catch (err) {
         console.log(err);
@@ -283,7 +281,6 @@ module.exports.getServicesDelete = async function (req, res, next) {
             })
             .del();
 
-        // redirect ke /admin/services
         res.redirect("/admin/services");
     } catch (err) {
         console.log(err);
@@ -315,7 +312,6 @@ module.exports.getCarouselsIndex = async function (req, res, next) {
 //
 module.exports.postCarouselsUpload = async function (req, res, next) {
     try {
-        // jika request file ada
         if (req.file) {
             const { title, description } = req.body;
 
@@ -336,7 +332,6 @@ module.exports.postCarouselsUpload = async function (req, res, next) {
 //
 module.exports.getCarouselsDelete = async function (req, res, next) {
     try {
-        // hapus data di db nya.
         const willBeDeleted = await knex("carousels").where({
             _id: req.params.id,
         });
@@ -347,10 +342,8 @@ module.exports.getCarouselsDelete = async function (req, res, next) {
             })
             .del();
 
-        // hapus file nya
         fs.unlinkSync("./" + willBeDeleted[0].path);
 
-        // redirect ke /admin/carousels
         res.redirect("/admin/carousels");
     } catch (err) {
         console.log(err);
@@ -382,7 +375,6 @@ module.exports.getPortfoliosIndex = async function (req, res, next) {
 //
 module.exports.postPortfoliosUpload = async function (req, res, next) {
     try {
-        // jika request file ada
         if (req.file) {
             const { title } = req.body;
 
@@ -402,7 +394,6 @@ module.exports.postPortfoliosUpload = async function (req, res, next) {
 //
 module.exports.getPortfoliosDelete = async function (req, res, next) {
     try {
-        // hapus data di db nya.
         const willBeDeleted = await knex("portfolios").where({
             _id: req.params.id,
         });
@@ -413,10 +404,8 @@ module.exports.getPortfoliosDelete = async function (req, res, next) {
             })
             .del();
 
-        // hapus file nya
         fs.unlinkSync("./" + willBeDeleted[0].path);
 
-        // redirect ke /admin/portfolios
         res.redirect("/admin/portfolios");
     } catch (err) {
         console.log(err);
