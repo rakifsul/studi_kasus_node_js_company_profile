@@ -51,7 +51,7 @@ password: admin
 
 ## Screenshot
 
-![ScreenShot](.readme-assets/shb-nd-ejs-company-profile-1.png?raw=true)
+![ScreenShot](https://github.com/shbfrlnc/shbfrlnc-images/blob/main/gratisan/shb-nd-ejs-company-profile/screenshot-1.png?raw=true)
 
-![ScreenShot](.readme-assets/shb-nd-ejs-company-profile-2.png?raw=true)
+![ScreenShot](https://github.com/shbfrlnc/shbfrlnc-images/blob/main/gratisan/shb-nd-ejs-company-profile/screenshot-2.png?raw=true)
 
