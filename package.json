@@ -1,6 +1,6 @@
 {
     "name": "shb_nd_ejs_company_profile",
-    "version": "2023.5.4",
+    "version": "2023.7.9",
     "private": true,
     "scripts": {
         "start": "node app.js",
