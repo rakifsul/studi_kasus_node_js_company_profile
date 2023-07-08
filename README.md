@@ -64,3 +64,9 @@ password: admin
 ```
 
 Untuk mengubah favicon di halaman depan, replace favicon.png yang ada di folder "/public/img" yang ada di dalam folder source code.
+
+## Screenshot
+
+![ScreenShot](https://github.com/shbfrlnc/shbfrlnc-images/blob/main/gratisan/shb-nd-ejs-company-profile/screenshot-0.png?raw=true)
+
+![ScreenShot](https://github.com/shbfrlnc/shbfrlnc-images/blob/main/gratisan/shb-nd-ejs-company-profile/screenshot-1.png?raw=true)
