@@ -1,7 +1,12 @@
+// script ini tugasnya adalah menghubungkan controllers/admin.js dengan route.
+
 const express = require("express");
 const adminController = require("../controllers/admin");
+
+// session checker digunakan untuk authorization
 const sessionChecker = require("../middlewares/sessionchecker");
 
+// buat objek router agar bisa memakai get, post, dan lain-lain.
 const router = express.Router();
 
 router.get("/", sessionChecker.notLoggedIn, adminController.getIndex);

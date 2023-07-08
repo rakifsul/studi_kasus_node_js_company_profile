@@ -11,14 +11,14 @@
         <% if (data.results <= 0) { %>
         <h4>No Messages</h4>
         <% } else { %>
-        <h4>You'v Got Messages</h4>
+        <h4>You've Got Messages</h4>
         <% } %>
       </div>
       <hr>
       <div class="row">
         <% data.results.forEach((item, index)=> { %>
         <div class="col-md-4 mb-3">
-          <div class="card">
+          <div class="card mx-3">
             <div class="card-body">
               <h5 class="card-text">
                 <%= item.name %>
