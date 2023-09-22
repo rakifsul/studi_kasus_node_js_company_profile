@@ -2,7 +2,7 @@
 
 ## Software Apakah Ini?
 
-shb_nd_ejs_company_profile adalah source code website company profile yang bisa di-edit di panel admin...
+shb_nd_ejs_company_profile adalah source code website company profile yang bisa di-edit di panel admin.
 
 ## Cara Kerja
 
