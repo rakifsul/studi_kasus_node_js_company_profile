@@ -4,10 +4,6 @@
 
 https://sfrfrlnc.com/shb_nd_ejs_company_profile/
 
-## Catatan
-
-Sejak tanggal 24 Oktober 2023, software ini bukan berlisensi GPL lagi.
-
 ## Software Apakah Ini?
 
 shb_nd_ejs_company_profile adalah source code website company profile yang bisa di-edit di panel admin.
