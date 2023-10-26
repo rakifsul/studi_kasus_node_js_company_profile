@@ -4,6 +4,11 @@
 
 https://sfrfrlnc.com/shb_nd_ejs_company_profile/
 
+## Lisensi
+
+- AGPL 3.0 (untuk non komersial)
+- [Traktir License](https://sfrfrlnc.com/traktir-license/) (untuk komersial)
+
 ## Software Apakah Ini?
 
 shb_nd_ejs_company_profile adalah source code website company profile yang bisa di-edit di panel admin.
