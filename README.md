@@ -6,8 +6,7 @@ https://sfrfrlnc.com/shb_nd_ejs_company_profile/
 
 ## Lisensi
 
-- AGPL 3.0 (untuk non komersial)
-- [Traktir License](https://sfrfrlnc.com/traktir-license/) (untuk komersial)
+- [Traktir License](https://sfrfrlnc.com/traktir-license/)
 
 ## Software Apakah Ini?
 
