@@ -6,7 +6,7 @@ https://sfrfrlnc.com/shb_nd_ejs_company_profile/
 
 ## Lisensi
 
-- [Traktir License](https://sfrfrlnc.com/traktir-license/)
+-   [Traktir License](https://sfrfrlnc.com/traktir-license/)
 
 ## Software Apakah Ini?
 
@@ -32,7 +32,9 @@ Selanjutnya, ubah isi dari .env sesuai dengan detail database dan sistem Anda.
 
 Di sana Anda bisa mengubah port, environment, session secret, dan detail database.
 
-Kode ini membutuhkan MySQL, jadi pastikan Anda telah menginstallnya di komputer Anda dan membuat databasenya sesuai konfigurasi yang ada di file .env tadi.
+Kode ini membutuhkan MySQL untuk staging dan production.
+
+Jadi, pastikan Anda telah menginstallnya di komputer Anda dan membuat databasenya sesuai konfigurasi yang ada di file .env tadi.
 
 Sekarang, kita telah memiliki database di MySQL dan file .env yang sudah dikonfigurasi.
 
@@ -44,11 +46,15 @@ Selanjutnya, jalankan:
 npm install
 ```
 
-Selanjutnya, jalankan:
+Selanjutnya, jalankan (sesuaikan apakah ingin dev, staging, atau production, lihat package json script.):
+
+Jika dev:
 
 ```
-npm run db:refresh
+npm run db:dev:refresh
 ```
+
+Catat bahwa dev menggunakan sqlite, jadi tidak perlu install MySQL.
 
 Selanjutnya, jalankan:
 
