@@ -1,5 +1,6 @@
 const knex = require("knex");
 const knexfile = require("./knexfile");
+const path = require("path");
 
 let knexEnv;
 if (process.env.KNEX_ENV === "development") {
@@ -11,6 +12,11 @@ if (process.env.KNEX_ENV === "development") {
 } else {
     throw Error("invalid environment.");
 }
+
+knexfile.development.connection.filename = path.join(__dirname, knexfile.development.connection.filename);
+
+console.log("BUGFIX WORKAROUND !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+console.log(knexfile.development.connection.filename);
 
 const db = knex(knexEnv);
 

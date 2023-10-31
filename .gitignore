@@ -62,3 +62,6 @@ typings/
 
 # dotenv
 .env
+
+# sqlite3
+databases/*.sqlite3

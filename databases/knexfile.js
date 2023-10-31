@@ -8,13 +8,9 @@ require("dotenv").config({
  */
 module.exports = {
     development: {
-        client: "mysql2",
+        client: "sqlite3",
         connection: {
-            host: process.env.KNEX_DEV_HOST,
-            port: process.env.KNEX_DEV_PORT,
-            user: process.env.KNEX_DEV_USER,
-            password: process.env.KNEX_DEV_PASSWORD,
-            database: process.env.KNEX_DEV_DATABASE,
+            filename: process.env.KNEX_DEV_DATABASE,
         },
         migrations: {
             tableName: "knex_migrations",
