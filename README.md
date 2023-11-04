@@ -4,10 +4,6 @@
 
 https://sfrfrlnc.com/shb_nd_ejs_company_profile/
 
-## Lisensi
-
--   [Traktir License](https://sfrfrlnc.com/traktir-license/)
-
 ## Software Apakah Ini?
 
 shb_nd_ejs_company_profile adalah source code website company profile yang bisa di-edit di panel admin.
