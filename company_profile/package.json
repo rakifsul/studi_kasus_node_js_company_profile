@@ -1,5 +1,5 @@
 {
-    "name": "shb_nd_ejs_company_profile",
+    "name": "company_profile",
     "version": "2023.7.9",
     "main": "app.js",
     "private": true,

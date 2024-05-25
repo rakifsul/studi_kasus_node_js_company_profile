@@ -1,12 +1,10 @@
-# shb_nd_ejs_company_profile - Aplikasi Node.js Dynamic Company Profile
+# company_profile - Aplikasi Node.js Dynamic Company Profile
 
 ## Link ke Halaman Web
 
-https://sfrfrlnc.com/shb_nd_ejs_company_profile/
-
 ## Software Apakah Ini?
 
-shb_nd_ejs_company_profile adalah source code website company profile yang bisa di-edit di panel admin.
+company_profile adalah source code website company profile yang bisa di-edit di panel admin.
 
 ## Cara Kerja
 
