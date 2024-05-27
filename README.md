@@ -9,6 +9,10 @@
         -   [Mengubah Favicon](#mengubah-favicon)
     -   [Source Code Project Ini](#source-code-project-ini)
     -   [Jika Ingin Traktir Saya](#jika-ingin-traktir-saya)
+    -   [Pendahuluan](#pendahuluan)
+    -   [Tujuan](#tujuan)
+    -   [Prasyarat](#prasyarat)
+    -   [Langkah-Langkah](#langkah-langkah)
     -   [Bersambung...](#bersambung)
 
 ## Cara Mencoba Kode Ini
@@ -154,5 +158,47 @@ https://taplink.cc/rakifsul
 Di sana ada link untuk traktirnya dan link lainnya.
 
 Selamat menikmati.
+
+## Pendahuluan
+
+Node JS telah menjadi salah satu platform yang populer dalam pengembangan aplikasi web, terutama bagi mereka yang mencari efisiensi dan kinerja tinggi.
+
+Dengan menggunakan JavaScript di sisi server, Node JS menawarkan berbagai keunggulan seperti non-blocking I/O dan arsitektur event-driven yang memungkinkan penanganan banyak koneksi secara simultan tanpa membebani server.
+
+Pada artikel ini, saya akan membahas studi kasus tentang cara membuat aplikasi company profile menggunakan Node JS.
+
+Aplikasi company profile adalah sebuah aplikasi web yang dirancang untuk menampilkan informasi penting tentang sebuah perusahaan.
+
+Informasi ini mencakup sejarah perusahaan, visi dan misi, layanan atau produk yang ditawarkan, portofolio proyek, hingga informasi kontak.
+
+Aplikasi ini bertujuan untuk memberikan gambaran lengkap dan profesional kepada klien atau calon pelanggan tentang identitas dan kapabilitas perusahaan.
+
+Tujuan dari artikel ini adalah untuk memberikan panduan praktis langkah demi langkah bagi pengembang pemula hingga menengah dalam membangun aplikasi company profile yang fungsional dan menarik.
+
+Kita akan membahas mulai dari pembentukan struktur file dan folder project, penulisan source code, pembuatan halaman-halaman web, hingga implementasi fitur-fitur dinamis yang umum digunakan dalam aplikasi company profile.
+
+Dengan mengikuti tutorial ini, diharapkan pembaca akan mendapatkan pemahaman yang lebih baik tentang penggunaan Node JS dalam konteks dunia nyata, serta keterampilan praktis yang dapat langsung diterapkan dalam proyek pengembangan mereka.
+
+Mari kita mulai.
+
+## Tujuan
+
+Tujuan dari artikel ini adalah:
+
+-   Pembaca mengenal apa itu aplikasi company profile
+-   Pembaca mampu membuat aplikasi company profile yang dinamis dengan Node JS dan database dari jenis SQL (SQLite dan MySQL)
+-   Pembaca mampu menerapkan sistem login dan register pada aplikasi company profile
+-
+
+## Prasyarat
+
+Prasyarat dari artikel ini adalah:
+
+-   Menggunakan Windows 11
+-   Menggunakan Node JS versi 20.9.0
+-   Telah menginstall MySQL Server
+-   Telah menginstall MySQL client (bebas, asal Anda bisa menggunakannya)
+
+## Langkah-Langkah
 
 ## Bersambung...
