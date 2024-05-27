@@ -18,12 +18,17 @@
         -   [Meng-install Dependencies](#meng-install-dependencies)
         -   [Membuat File ".env.example" dan ".env"](#membuat-file-envexample-dan-env)
         -   [Membuat File "app.js"](#membuat-file-appjs)
+        -   [Mengkopi Subfolder "public" dari Contoh Project ke Project Ini](#mengkopi-subfolder-public-dari-contoh-project-ke-project-ini)
+        -   [Membuat Subfolder "lib", "sessions", dan "uploads"](#membuat-subfolder-lib-sessions-dan-uploads)
         -   [Membuat Subfolder "controllers"](#membuat-subfolder-controllers)
         -   [Membuat Subfolder "databases"](#membuat-subfolder-databases)
         -   [Membuat Subfolder "middlewares"](#membuat-subfolder-middlewares)
         -   [Membuat Subfolder "routes"](#membuat-subfolder-routes)
-        -   [Mengkopi Subfolder "public" dari Contoh Project ke Project Ini](#mengkopi-subfolder-public-dari-contoh-project-ke-project-ini)
-        -   [Membuat Subfolder "lib", "sessions", dan "uploads"](#membuat-subfolder-lib-sessions-dan-uploads)
+        -   [Membuat Subfolder "views"](#membuat-subfolder-views)
+            -   [Membuat Subfolder "views/admin"](#membuat-subfolder-viewsadmin)
+            -   [Membuat Subfolder "views/auth"](#membuat-subfolder-viewsauth)
+            -   [Membuat Subfolder "views/index"](#membuat-subfolder-viewsindex)
+        -   [Pembuatan Struktur Project Selesai](#pembuatan-struktur-project-selesai)
     -   [Bersambung...](#bersambung)
 
 ## Cara Mencoba Kode Ini
@@ -467,6 +472,20 @@ app.listen(port, function () {
     console.log(`server berjalan di port ${port}`);
 });
 ```
+
+### Mengkopi Subfolder "public" dari Contoh Project ke Project Ini
+
+Sebenarnya, Anda bisa membuat subfolder ini satu demi satu, tapi agar lebih cepat dikopi saja.
+
+Folder ini hanya untuk kumpulan file-file statis seperti Gambar, CSS dan JavaScript browser.
+
+Jadi, bukalah contoh project "company_profile" yang disertakan kemudian copy folder "public"-nya ke project yang Anda buat ini.
+
+### Membuat Subfolder "lib", "sessions", dan "uploads"
+
+Buatlah subfolder "lib", "sessions", dan "uploads".
+
+Kosongkan isi subfolder-subfolder tersebut.
 
 ### Membuat Subfolder "controllers"
 
@@ -1414,18 +1433,1421 @@ module.exports.loggedIn = (req, res, next) => {
 
 ### Membuat Subfolder "routes"
 
-### Mengkopi Subfolder "public" dari Contoh Project ke Project Ini
+Buatlah subfolder "routes", kemudian isi dengan file-file ini:
 
-Sebenarnya, Anda bisa membuat subfolder ini satu demi satu, tapi agar lebih cepat dikopi saja.
+-   admin.js
+-   auth.js
+-   index.js
 
-Folder ini hanya untuk kumpulan file-file statis seperti Gambar, CSS dan JavaScript browser.
+Isi file "routes/admin.js" dengan kode ini:
 
-Jadi, bukalah contoh project "company_profile" yang disertakan kemudian copy folder "public"-nya ke project yang Anda buat ini.
+```
+// script ini tugasnya adalah menghubungkan controllers/admin.js dengan route.
 
-### Membuat Subfolder "lib", "sessions", dan "uploads"
+const express = require("express");
+const adminController = require("../controllers/admin");
 
-Buatlah subfolder "lib", "sessions", dan "uploads".
+// session checker digunakan untuk authorization
+const sessionChecker = require("../middlewares/sessionchecker");
 
-Kosongkan isi subfolder-subfolder tersebut.
+// buat objek router agar bisa memakai get, post, dan lain-lain.
+const router = express.Router();
+
+router.get("/", sessionChecker.notLoggedIn, adminController.getIndex);
+
+router.get("/cpu-usage", sessionChecker.notLoggedIn, adminController.getCPUUsage);
+
+router.get("/memory-usage", adminController.getMemoryUsage);
+
+router.get("/settings", sessionChecker.notLoggedIn, adminController.getSettings);
+
+router.post("/settings/edit", sessionChecker.notLoggedIn, adminController.postSettingsEdit);
+
+router.get("/messages", sessionChecker.notLoggedIn, adminController.getMessagesIndex);
+
+router.get("/messages/delete/:id", sessionChecker.notLoggedIn, adminController.getMessagesDelete);
+
+router.get("/texts", sessionChecker.notLoggedIn, adminController.getTextsIndex);
+
+router.post("/texts/edit", sessionChecker.notLoggedIn, adminController.postTextsEdit);
+
+router.get("/skills", sessionChecker.notLoggedIn, adminController.getSkillsIndex);
+
+router.post("/skills/add", sessionChecker.notLoggedIn, adminController.postSkillsAdd);
+
+router.get("/skills/delete/:id", sessionChecker.notLoggedIn, adminController.getSkillsDelete);
+
+router.get("/services", sessionChecker.notLoggedIn, adminController.getServicesIndex);
+
+router.post("/services/add", sessionChecker.notLoggedIn, adminController.postServicesAdd);
+
+router.get("/services/delete/:id", sessionChecker.notLoggedIn, adminController.getServicesDelete);
+
+router.get("/carousels", sessionChecker.notLoggedIn, adminController.getCarouselsIndex);
+
+router.post("/carousels/upload", sessionChecker.notLoggedIn, adminController.postCarouselsUpload);
+
+router.get("/carousels/delete/:id", sessionChecker.notLoggedIn, adminController.getCarouselsDelete);
+
+router.get("/portfolios", sessionChecker.notLoggedIn, adminController.getPortfoliosIndex);
+
+router.post("/portfolios/upload", sessionChecker.notLoggedIn, adminController.postPortfoliosUpload);
+
+router.get("/portfolios/delete/:id", sessionChecker.notLoggedIn, adminController.getPortfoliosDelete);
+
+module.exports = router;
+```
+
+Isi file "routes/auth.js" dengan kode ini:
+
+```
+// script ini tugasnya adalah menghubungkan controllers/auth.js dengan route.
+
+const express = require("express");
+const authController = require("../controllers/auth");
+
+// session checker digunakan untuk authorization
+const sessionChecker = require("../middlewares/sessionchecker");
+
+// buat objek router agar bisa memakai get, post, dan lain-lain.
+const router = express.Router();
+
+router.get("/login", sessionChecker.loggedIn, authController.getLogin);
+
+router.post("/login", sessionChecker.loggedIn, authController.postLogin);
+
+router.get("/register", authController.getRegister);
+
+router.post("/register", authController.postRegister);
+
+router.get("/logout", authController.getLogout);
+
+module.exports = router;
+```
+
+Isi file "routes/index.js" dengan kode ini:
+
+```
+// script ini tugasnya adalah menghubungkan controllers/index.js dengan route.
+
+const express = require("express");
+const indexController = require("../controllers/index");
+
+// buat objek router agar bisa memakai get, post, dan lain-lain.
+const router = express.Router();
+
+router.get("/", indexController.getIndex);
+
+router.post("/send-message", indexController.postIndexSendMessage);
+
+module.exports = router;
+```
+
+### Membuat Subfolder "views"
+
+Buatlah subfolder bernama "views", kemudian isi dengan file-file ini:
+
+-   error.ejs
+-   helper.ejs
+
+Isi file "views/error.ejs" dengan kode ini:
+
+```
+<h1>
+    <%= error.message %>
+</h1>
+<h2>
+    <%= error.status %>
+</h2>
+<pre><%= error.stack %></pre>
+```
+
+Isi file "views/helper.ejs" dengan kode ini:
+
+```
+<%
+generateExcerpt = function(wholeText) {
+    var strLen = wholeText.length;
+    if (strLen < 100) {
+        return wholeText.substring(0, strLen).replace(/<[^(^(>)]*>?/gm, '');
+    }
+    return wholeText.substring(0, 100).replace(/<[^(^(>)]*>?/gm, '');
+}
+
+isOptionSelected = function (val, valDB) {
+    return val == valDB ? "selected" : "";
+}
+
+pgnPrevious = function (currentPage) {
+    let tmp = currentPage - 1;
+    return tmp < 0 ? { index: 0, disabled: true } : { index: tmp, disabled: false };
+}
+
+pgnNext = function (currentPage, totalPage) {
+    let tmp = currentPage + 1;
+    return tmp >= totalPage ? { index: currentPage, disabled: true } : { index: tmp, disabled: false };
+}
+%>
+```
+
+#### Membuat Subfolder "views/admin"
+
+Buatlah subfolder bernama "views/admin", kemudian isi dengan file-file ini:
+
+-   carousels.ejs
+-   carousels.js.ejs
+-   index.ejs
+-   index.js.ejs
+-   layout.ejs
+-   messages.ejs
+-   messages.js.ejs
+-   portfolios.ejs
+-   portfolios.js.ejs
+-   services.ejs
+-   services.js.ejs
+-   settings.ejs
+-   settings.js.ejs
+-   skills.ejs
+-   skills.js.ejs
+-   texts.ejs
+-   texts.js.ejs
+
+Isi file "views/admin/carousels.ejs" dengan kode ini:
+
+```
+<div class="row mt-2">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <h3>Carousels</h3>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <button id="btn-upload-file" class="btn btn-dark">Upload Image</button>
+      </div>
+      <hr>
+      <div class="row">
+        <% data.results.forEach((item, index)=> { %>
+        <div class="col-md-4 mb-3">
+          <div class="card">
+            <img src="/<%= item.path %>" class="card-img-top img-fluid" alt="...">
+            <hr>
+            <div class="card-body">
+              <h5 class="card-text">
+                <%= item.title %>
+              </h5>
+              <p class="card-text">
+                <%= item.description %>
+              </p>
+            </div>
+
+            <div class="card-footer">
+              <a href="/admin/carousels/delete/<%= item._id %>"><span class="badge rounded-pill text-bg-danger">Delete</span></a>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Upload Image</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/admin/carousels/upload" method="post" enctype="multipart/form-data">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="title-add">Title:</label>
+            <input type="text" class="form-control" id="title-add" name="title">
+          </div>
+          <div class="form-group">
+            <label for="description-add">Description:</label>
+            <input type="text" class="form-control" id="description-add" name="description">
+          </div>
+          <div class="form-group">
+            <input id="fl-file" type="file" name="upload" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-dark">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+```
+
+Isi file "views/admin/carousels.js.ejs" dengan kode ini:
+
+```
+<script>
+  $("#btn-upload-file").click(function() {
+    let addModal = new bootstrap.Modal(document.getElementById("modal-add"), {
+      backdrop: 'static',
+      keyboard: false
+    });
+    addModal.show();
+  });
+</script>
+```
+
+Isi file "views/admin/index.ejs" dengan kode ini:
+
+```
+<div class="row mt-2">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <h3>Resource Usage</h3>
+  </div>
+</div>
+
+<div class="row mt-2">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <b>Current CPU Usage</b>
+      </div>
+      <div class="card-body">
+        <canvas id="cpuUsageChartPie" width="100" height="50"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <b>Current Memory Usage</b>
+      </div>
+      <div class="card-body">
+        <canvas id="memoryUsageChartPie" width="100" height="50"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+Isi file "views/admin/index.js.ejs" dengan kode ini:
+
+```
+<script>
+    var configCPUUsagePie = {
+        type: 'pie',
+        data: {
+            labels: [
+                "CPU Used",
+                "CPU Free"
+            ],
+            datasets: [{
+                data: [100, 50],
+                backgroundColor: [
+                    "#FF6384",
+                    "#36A2EB"
+                ],
+                hoverBackgroundColor: [
+                    "#FF6384",
+                    "#36A2EB"
+                ]
+            }]
+        }
+    };
+
+    var cpuUsageChartPie = new Chart(
+        document.getElementById("cpuUsageChartPie").getContext("2d"),
+        configCPUUsagePie
+    );
+
+    setInterval(function () {
+        $.get("/admin/cpu-usage", function (data) {
+            configCPUUsagePie.data.datasets[0].data[0] = data.value;
+            configCPUUsagePie.data.datasets[0].data[1] = (100 - data.value);
+            cpuUsageChartPie.update();
+        });
+    }, 1000);
+
+    var configMemoryUsagePie = {
+        type: 'pie',
+        data: {
+            labels: [
+                "Memory Used",
+                "Memory Free"
+            ],
+            datasets: [{
+                data: [100, 50],
+                backgroundColor: [
+                    "#FF6384",
+                    "#36A2EB"
+                ],
+                hoverBackgroundColor: [
+                    "#FF6384",
+                    "#36A2EB"
+                ]
+            }]
+        }
+    };
+
+    var memoryUsageChartPie = new Chart(
+        document.getElementById("memoryUsageChartPie").getContext("2d"),
+        configMemoryUsagePie
+    );
+
+    setInterval(function () {
+        let self = this;
+        $.get("/admin/memory-usage", function (data) {
+            configMemoryUsagePie.data.datasets[0].data[0] = data.value;
+            configMemoryUsagePie.data.datasets[0].data[1] = 100 - data.value;
+            memoryUsageChartPie.update();
+        });
+
+    }, 1000);
+</script>
+```
+
+Isi file "views/admin/layout.ejs" dengan kode ini:
+
+```
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <link rel="shortcut icon" type="image/png" href="/public/favicon.png" />
+
+  <title>
+    <%= data.text.siteTitle %>
+  </title>
+
+  <link rel="stylesheet" href="/public/vendor/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/public/vendor/icons/font/bootstrap-icons.css" />
+  <link rel='stylesheet' href="/public/css/bootstrap-mod.css" />
+</head>
+
+<body>
+  <div id="sidebar" class="sidebar bg-dark">
+    <div class="sidebar-brand">
+      <img class="img-fluid sidebar-brand-img mx-auto d-block" src="/public/img/icon.png" alt="icon" width="200" height="200">
+      <h3 class="text-white text-center">Company Profile</h3>
+    </div>
+    <hr class="bg-light">
+    <ul class="sidebar-ul">
+      <li class="sidebar-li">
+        <a class="btn btn-outline-light w-100 btn-mobile" href="/admin"><i class="bi bi-speedometer float-start"></i><span>
+            Dashboard</span></a>
+      </li>
+      <li class="sidebar-li">
+        <a class="btn btn-outline-light w-100 btn-mobile" href="/admin/messages"><i class="bi bi-folder float-start"></i>
+          <span>
+            Messages</span></a>
+      </li>
+      <li class="sidebar-li">
+        <a class="btn btn-outline-light w-100 btn-mobile" href="/admin/texts"><i class="bi bi-folder float-start"></i>
+          <span>
+            Texts</span></a>
+      </li>
+      <li class="sidebar-li">
+        <a class="btn btn-outline-light w-100 btn-mobile" href="/admin/skills"><i class="bi bi-folder float-start"></i>
+          <span>
+            Skills</span></a>
+      </li>
+      <li class="sidebar-li">
+        <a class="btn btn-outline-light w-100 btn-mobile" href="/admin/services"><i class="bi bi-folder float-start"></i>
+          <span>
+            Services</span></a>
+      </li>
+      <li class="sidebar-li">
+        <a class="btn btn-outline-light w-100 btn-mobile" href="/admin/carousels"><i class="bi bi-upload float-start"></i>
+          <span>
+            Carousels</span></a>
+      </li>
+      <li class="sidebar-li">
+        <a class="btn btn-outline-light w-100 btn-mobile" href="/admin/portfolios"><i class="bi bi-upload float-start"></i>
+          <span>
+            Portfolios</span></a>
+      </li>
+      <li class="sidebar-li">
+        <a class="btn btn-outline-light w-100 btn-mobile" href="/admin/settings"><i class="bi bi-gear-fill float-start"></i>
+          <span>
+            Settings</span></a>
+      </li>
+    </ul>
+    <hr class="bg-light">
+    <!-- <ul class="sidebar-ul">
+            <li class="sidebar-li">
+                <a class="btn btn-outline-light w-100 btn-mobile" href="javascript:void(0);"><i class="bi bi-plug-fill float-left"></i>
+                    <span>Plugins</span></a>
+            </li>
+        </ul> -->
+  </div>
+
+  <div class="main">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto">
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="/admin">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="/" target="_blank">Preview</a>
+          </li>
+          <li class="nav-item dropdown active">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Profile
+            </a>
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/admin/settings">Edit Profile</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/auth/logout"><i class="bi bi-box-arrow-right float-left"></i>Logout</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <% include ("../helper") %>
+
+      <%- include("../" + child, {data: data}); %>
+    </div>
+  </div>
+
+  <script src="/public/vendor/jquery/jquery.min.js"></script>
+  <script src="/public/vendor/jquery-sortable/jquery-sortable.js"></script>
+  <script src="/public/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/public/vendor/chart.js/Chart.bundle.min.js"></script>
+  <script src="/public/js/admin.js"></script>
+  <%- include("../" + clientScript, {data: data}); %>
+</body>
+
+</html>
+```
+
+Isi file "views/admin/messages.ejs" dengan kode ini:
+
+```
+<div class="row mt-2">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <h3>Messages</h3>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <% if (data.results <= 0) { %>
+        <h4>No Messages</h4>
+        <% } else { %>
+        <h4>You've Got Messages</h4>
+        <% } %>
+      </div>
+      <hr>
+      <div class="row">
+        <% data.results.forEach((item, index)=> { %>
+        <div class="col-md-4 mb-3">
+          <div class="card mx-3">
+            <div class="card-body">
+              <h5 class="card-text">
+                <%= item.name %>
+              </h5>
+
+              <h5 class="card-text">
+                <%= item.email %>
+              </h5>
+
+              <p><%= item.message %></p>
+            </div>
+
+            <div class="card-footer">
+              <a href="/admin/messages/delete/<%= item._id %>"><span class="badge rounded-pill text-bg-danger">Delete</span></a>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+Isi file "views/admin/messages.js.ejs" dengan kode ini:
+
+```
+<!-- kosong -->
+```
+
+Isi file "views/admin/portfolios.ejs" dengan kode ini:
+
+```
+<div class="row mt-2">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <h3>Portfolios</h3>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <button id="btn-upload-file" class="btn btn-dark">Upload Image</button>
+      </div>
+      <hr>
+      <div class="row">
+        <% data.results.forEach((item, index)=> { %>
+        <div class="col-md-4 mb-3">
+          <div class="card">
+            <img src="/<%= item.path %>" class="card-img-top img-fluid" alt="...">
+            <hr>
+            <div class="card-body">
+              <h5 class="card-text">
+                <%= item.title %>
+              </h5>
+            </div>
+
+            <div class="card-footer">
+              <a href="/admin/portfolios/delete/<%= item._id %>"><span class="badge rounded-pill text-bg-danger">Delete</span></a>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Upload Image</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/admin/portfolios/upload" method="post" enctype="multipart/form-data">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="title-add">Title:</label>
+            <input type="text" class="form-control" id="title-add" name="title">
+          </div>
+          <div class="form-group">
+            <input id="fl-file" type="file" name="upload" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-dark">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+```
+
+Isi file "views/admin/portfolios.js.ejs" dengan kode ini:
+
+```
+<script>
+  $("#btn-upload-file").click(function() {
+    let addModal = new bootstrap.Modal(document.getElementById("modal-add"), {
+      backdrop: 'static',
+      keyboard: false
+    });
+    addModal.show();
+  });
+</script>
+```
+
+Isi file "views/admin/services.ejs" dengan kode ini:
+
+```
+<div class="row mt-2">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <h3>Services</h3>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <button id="btn-upload-file" class="btn btn-dark">Add Service</button>
+      </div>
+      <hr>
+      <div class="row">
+        <% data.results.forEach((item, index)=> { %>
+        <div class="col-md-4 mb-3">
+          <div class="card">
+            <div class="text-center">
+              <%- item.svg %>
+            </div>
+            <hr>
+            <div class="card-body">
+              <h5 class="card-text">
+                <%= item.title %>
+              </h5>
+
+              <p><%= item.description %></p>
+            </div>
+
+            <div class="card-footer">
+              <a href="/admin/services/delete/<%= item._id %>"><span class="badge rounded-pill text-bg-danger">Delete</span></a>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add New Service</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/admin/services/add" method="post">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="title-add">Title:</label>
+            <input type="text" class="form-control" id="title-add" name="title">
+          </div>
+          <div class="form-group">
+            <label for="description-add">Description:</label>
+            <input type="text" class="form-control" id="description-add" name="description">
+          </div>
+          <div class="form-group">
+            <label for="svg-add">Copy Paste SVG Here (Must be Valid):</label>
+            <textarea class="form-control" id="svg-add" name="svg"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-dark">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+```
+
+Isi file "views/admin/services.js.ejs" dengan kode ini:
+
+```
+<script>
+  $("#btn-upload-file").click(function() {
+    let addModal = new bootstrap.Modal(document.getElementById("modal-add"), {
+      backdrop: 'static',
+      keyboard: false
+    });
+    addModal.show();
+  });
+</script>
+```
+
+Isi file "views/admin/settings.ejs" dengan kode ini:
+
+```
+<div class="row mt-2">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <h3>Settings</h3>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="">Account Settings</h3>
+      </div>
+      <% data.errors.forEach(function(result){ %>
+      <div class="alert alert-danger" role="alert">
+        <%= result.message %>
+      </div>
+      <% }); %>
+      <div class="card-body">
+        <form action="/admin/settings/edit" method="POST">
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input id="email" name="email" value="<%= data.adminEmail %>" type="email" class="form-control" placeholder="Enter Email">
+          </div>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <div class="input-group mb-3">
+              <input id="password" name="password" value="" type="password" class="form-control" placeholder="Enter Password">
+              <div class="input-group-append">
+                <button onclick="toggleShowHidePassword();" class="btn btn-outline-secondary" type="button" id="btn-show-hide"><i class="bi bi-eye-slash" aria-hidden="true"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-dark">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+Isi file "views/admin/settings.js.ejs" dengan kode ini:
+
+```
+<script>
+    function toggleShowHidePassword() {
+        let passwordElement = $("#password");
+        if (passwordElement.attr("type") === "password") {
+            passwordElement.attr("type", "text");
+            $('#btn-show-hide i').removeClass("bi-eye-slash");
+            $('#btn-show-hide i').addClass("bi-eye");
+        } else {
+            passwordElement.attr("type", "password");
+            $('#btn-show-hide i').addClass("bi-eye-slash");
+            $('#btn-show-hide i').removeClass("bi-eye");
+        }
+    };
+</script>
+```
+
+Isi file "views/admin/skills.ejs" dengan kode ini:
+
+```
+<div class="row mt-2">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <h3>Skills</h3>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <button id="btn-upload-file" class="btn btn-dark">Add Skill</button>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div class="table-responsive mt-2">
+            <table class="table table-hover">
+              <tr>
+                <th>IDX</th>
+                <th>Title</th>
+                <th>Level</th>
+                <th>Actions</th>
+              </tr>
+              <% data.results.forEach((item, index)=> { %>
+              <tr>
+                <td>
+                  <%= ++index %>
+                </td>
+                <td>
+                  <%= item.title %>
+                </td>
+                <td>
+                  <%= item.level %>
+                </td>
+                <td>
+                  <a href="/admin/Skills/delete/<%= item._id %>" class="badge text-bg-danger">Delete</a>
+                </td>
+              </tr>
+              <% }); %>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-add" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add New Service</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/admin/skills/add" method="post">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="title-add">Title</label>
+            <input type="text" class="form-control" id="title-add" name="title">
+          </div>
+          <div class="form-group">
+            <label for="level-add">Level (0 to 100)</label>
+            <input type="text" class="form-control" id="level-add" name="level">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-dark">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+```
+
+Isi file "views/admin/skills.js.ejs" dengan kode ini:
+
+```
+<script>
+  $("#btn-upload-file").click(function() {
+    let addModal = new bootstrap.Modal(document.getElementById("modal-add"), {
+      backdrop: 'static',
+      keyboard: false
+    });
+    addModal.show();
+  });
+</script>
+```
+
+Isi file "views/admin/texts.ejs" dengan kode ini:
+
+```
+<div class="row mt-2">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <h3>Texts</h3>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="card">
+      <div class="card-body">
+        <form action="/admin/texts/edit" method="POST">
+          <div class="form-group">
+            <label for="tx-site-title">Site Title:</label>
+            <input id="tx-site-title" name="siteTitle" type="text" value="<%= data.text.siteTitle %>" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="tx-site-seo-title">Site SEO Title:</label>
+            <input id="tx-site-seo-title" name="siteSEOTitle" type="text" value="<%= data.text.siteSEOTitle %>" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="tx-site-description">Site Description:</label>
+            <input id="tx-site-description" name="siteDescription" type="text" value="<%= data.text.siteDescription %>" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="tx-site-seo-description">Site SEO Description:</label>
+            <input id="tx-site-seo-description" name="siteSEODescription" type="text" value="<%= data.text.siteSEODescription %>" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="tx-site-about-subheading">About Subheading:</label>
+            <input id="tx-site-about-subheading" name="aboutSubHeading" type="text" value="<%= data.text.aboutSubHeading %>" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="tx-site-about-subtext">About Subtext:</label>
+            <input id="tx-site-about-subtext" name="aboutSubText" type="text" value="<%= data.text.aboutSubText %>" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="tx-site-info-subheading">Info Subheading:</label>
+            <input id="tx-site-info-subheading" name="infoSubHeading" type="text" value="<%= data.text.infoSubHeading %>" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="tx-site-address">Address:</label>
+            <input id="tx-site-address" name="address" type="text" value="<%= data.text.address %>" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="tx-site-phone">Phone:</label>
+            <input id="tx-site-phone" name="phone" type="text" value="<%= data.text.phone %>" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="tx-site-email">Email:</label>
+            <input id="tx-site-email" name="email" type="text" value="<%= data.text.email %>" class="form-control">
+          </div>
+
+          <div class="space-15"></div>
+
+          <div class="form-group">
+            <button type="submit" class="btn btn-dark">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+Isi file "views/admin/texts.js.ejs" dengan kode ini:
+
+```
+<!-- kosong -->
+```
+
+#### Membuat Subfolder "views/auth"
+
+Buatlah subfolder bernama "views/auth", kemudian isi dengan file-file ini:
+
+-   layout.ejs
+-   login.ejs
+-   login.js.ejs
+-   register.ejs
+-   register.js.ejs
+
+Isi file "views/auth/layout.ejs" dengan kode ini:
+
+```
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <link rel="shortcut icon" type="image/png" href="/public/favicon.png" />
+
+  <title>
+    <%= data.text.siteTitle %>
+  </title>
+
+  <link rel="stylesheet" href="/public/vendor/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/public/vendor/icons/font/bootstrap-icons.css" />
+</head>
+
+<body>
+  <div id="app" class="container">
+    <% include ("../helper") %>
+    <%- include("../" + child, {data: data}); %>
+  </div>
+  <script src="/public/vendor/jquery/jquery.min.js"></script>
+  <script src="/public/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/public/vendor/chart.js/Chart.bundle.min.js"></script>
+  <script src="/public/js/auth.js"></script>
+  <%- include("../" + clientScript, {data: data}); %>
+</body>
+
+</html>
+```
+
+Isi file "views/auth/login.ejs" dengan kode ini:
+
+```
+<div class="row">
+  <div class="col-md">
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="loginModalTitle">
+              <%= data.text.siteTitle %> - Log In
+            </h5>
+          </div>
+          <% data.errors.forEach(function(result){ %>
+          <div class="alert alert-danger" role="alert">
+            <%= result.message %>
+          </div>
+          <% }); %>
+          <form action="/auth/login" method="POST">
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Email address</label>
+                <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">Password</label>
+                <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <a class="btn btn-dark" href="/">Back to Home</a>
+              <button type="submit" class="btn btn-dark">Log In</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+Isi file "views/auth/login.js.ejs" dengan kode ini:
+
+```
+<script>
+    showAuthModal("loginModal");
+</script>
+```
+
+Isi file "views/auth/register.ejs" dengan kode ini:
+
+```
+<div class="row">
+  <div class="col-md">
+    <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="registerModalTitle">
+              <%= data.text.siteTitle %> - Register
+            </h5>
+          </div>
+          <% data.errors.forEach(function(result){ %>
+          <div class="alert alert-danger" role="alert">
+            <%= result.message %>
+          </div>
+          <% }); %>
+          <form action="/auth/register" method="POST">
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="tx-email">Email address</label>
+                <input type="email" name="email" class="form-control" id="tx-email" aria-describedby="emailHelp" placeholder="Enter email">
+              </div>
+              <div class="form-group">
+                <label for="tx-username">Username</label>
+                <input type="text" name="name" class="form-control" id="tx-username" aria-describedby="emailHelp" placeholder="Enter Username">
+              </div>
+              <div class="form-group">
+                <label for="tx-password">Password</label>
+                <input type="password" name="password" class="form-control" id="tx-password" placeholder="Password">
+              </div>
+              <div class="form-group">
+                <label for="tx-password-repeat" class="form-label">Repeat
+                  Password</label>
+                <input type="password" name="password_repeat" class="form-control" id="tx-password-repeat" placeholder="Masukkan password lagi">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <a class="btn btn-dark" href="/">Back to Home</a>
+              <button type="submit" class="btn btn-dark">Register</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+Isi file "views/auth/register.js.ejs" dengan kode ini:
+
+```
+<script>
+    showAuthModal("registerModal");
+</script>
+```
+
+#### Membuat Subfolder "views/index"
+
+Buatlah subfolder bernama "views/index", kemudian isi dengan file-file ini:
+
+-   index.ejs
+
+Isi file "views/index/index.ejs" dengan kode ini:
+
+```
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="<%= text.siteSEODescription %>">
+  <meta name="author" content="">
+
+  <link rel="shortcut icon" type="image/png" href="/public/img/favicon.png" />
+
+  <title><%= text.siteSEOTitle %></title>
+
+  <link rel="stylesheet" href="/public/vendor/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/public/vendor/icons/font/bootstrap-icons.css" />
+  <link rel='stylesheet' href="/public/css/style.css" />
+</head>
+
+<body>
+  <div id="app" class="container-fluid px-0">
+    <nav class="navbar navbar-expand-lg fixed-top bg-dark" data-bs-theme="dark">
+      <div class="container">
+        <a class="navbar-brand" href="#"><%= text.siteTitle %></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" href="#home">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="#about">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="#services">Services</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="#portfolios">Portfolios</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="#contact">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+
+    <section id="home" class="home scrollspy">
+      <div id="main-carousel" class="carousel slide" data-bs-ride="false">
+        <% if (carousels.length <= 0){ %>
+
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="/public/img/slider/1.jpg" class="d-block" alt="...">
+            <div class="carousel-caption d-none d-md-block bg-dark">
+              <h5>Slide Label 1</h5>
+              <p>Slide description 1.</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="/public/img/slider/2.jpg" class="d-block" alt="...">
+            <div class="carousel-caption d-none d-md-block bg-dark">
+              <h5>Slide Label 2</h5>
+              <p>Slide description 2.</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="/public/img/slider/3.jpg" class="d-block" alt="...">
+            <div class="carousel-caption d-none d-md-block bg-dark">
+              <h5>Slide Label 3</h5>
+              <p>Slide description 3.</p>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#main-carousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#main-carousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+
+        <% } else { %>
+
+        <div class="carousel-indicators">
+          <% carousels.forEach((item, index)=> { %>
+          <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="<%= index %>" <% if( index === 0) { %> class="active" <% } %> aria-current="true" aria-label="<%= item.title %>">
+          </button>
+          <% }); %>
+        </div>
+
+        <div class="carousel-inner">
+          <% carousels.forEach((item, index)=> { %>
+          <div <% if( index === 0) { %> class="carousel-item active" <% } else { %> class="carousel-item" <% } %>>
+            <img src="/<%= item.path %>" class="d-block" alt="...">
+            <div class="carousel-caption d-none d-md-block bg-dark">
+              <h5><%= item.title %></h5>
+              <p><%= item.description %></p>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#main-carousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#main-carousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+        <% } %>
+      </div>
+    </section>
+
+    <section id="about" class="about scrollspy text-bg-dark px-0 pt-5 pb-5">
+      <div class="container">
+        <h1 class="center">About Us</h1>
+        <hr>
+        <div class="row">
+          <div class="col-md-6 col-sm-12">
+            <h3 class="pb-2"><%= text.aboutSubHeading %></h3>
+            <blockquote><%= text.aboutSubText %></blockquote>
+          </div>
+          <div class="col-md-6 col-sm-12">
+            <h3 class="pb-2">Skills</h3>
+
+            <% skills.forEach((item, index)=> { %>
+            <h5><%= item.title %></h5>
+            <div class="progress" role="progressbar" aria-label="Default striped example" aria-valuenow="<%= item.level %>" aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-bar progress-bar-striped bg-dark" style="width: <%= item.level %>%"></div>
+            </div>
+            <hr>
+            <% }); %>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="services" class="services orange lighten-3 scrollspy pt-5 pb-5">
+      <div class="container">
+        <h1 class="center">Services</h1>
+        <hr>
+        <div class="row d-flex justify-content-center">
+          <% services.forEach((item, index)=> { %>
+          <div class="col-md-4 col-sm-12">
+            <div class="card-panel center">
+              <div class="text-center">
+                <%- item.svg %>
+              </div>
+              <hr>
+              <h5 class="text-center"><%= item.title %></h5>
+              <p><%= item.description %></p>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+      </div>
+    </section>
+
+    <section id="portfolios" class="portfolios scrollspy text-bg-dark pt-5 pb-5">
+      <div class="container">
+        <h1 class="center">Portfolios</h1>
+        <hr>
+        <div class="row d-flex justify-content-center">
+          <% portfolios.forEach((item, index)=> { %>
+          <div class="col-md-4 col-sm-12 mb-2 d-flex justify-content-center text-center">
+            <div class="card bg-dark" style="width: 18rem; border: none;">
+              <img src="/<%= item.path %>" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title text-center bg-light pt-2 pb-2"><%= item.title %></h5>
+              </div>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact orange lighten-3 scrollspy pt-5 pb-5">
+      <div class="container">
+        <h1 class="center">Contact Us</h1>
+        <hr>
+        <div class="row d-flex">
+          <div class="col-md-4 col-sm-12 flex-grow-1 mb-2">
+            <div class="card p-2" style="height: 100%;">
+              <div class="text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="110" height="110" fill="currentColor" class="bi bi-info-square-fill" viewBox="0 0 16 16">
+                  <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.93 4.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+                </svg>
+              </div>
+              <div style="margin-top: 60px"></div>
+              <h5 class="text-center">
+                <%= text.infoSubHeading %>
+              </h5>
+              <hr>
+              <ul class="collection">
+                <li class="collection-item">
+                  <%= text.address %>
+                </li>
+                <li class="collection-item">
+                  <%= text.phone %>
+                </li>
+                <li class="collection-item">
+                  <%= text.email %>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-md-8 col-sm-12 flex-grow-1 mb-2">
+            <div class="card p-2" style="height: 100%;">
+              <h5 class="text-center">
+                Send Us a Message
+              </h5>
+              <hr>
+              <form action="/send-message" method="post">
+                <div class="row">
+                  <div class="input-field col-md-12 col-sm-12">
+                    <label for="name" class="form-label">Name</label>
+                    <input id="name" name="name" type="text" class="form-control">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="input-field col-md-12 col-sm-12">
+                    <label for="email" class="form-label">Email</label>
+                    <input id="email" name="email" type="email" class="form-control">
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="input-field col-md-12 col-sm-12">
+                    <label for="message" class="form-label">Message</label>
+                    <textarea id="message" name="message" class="form-control" rows="3"></textarea>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="input-field col-md-12 col-sm-12">
+                    <button type="submit" class="btn btn-outline-dark w-100">
+                      Send
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer id="footer" class="footer text-bg-dark text-center">
+      <p class="center white-text">Copyright &copy <span id="current-year">2025</span> <%= text.siteTitle %></p>
+      <p><a href="/auth/login">Login</a> | <a href="/auth/register">Register</a></p>
+    </footer>
+  </div>
+  <script src="/public/vendor/jquery/jquery.min.js"></script>
+  <script src="/public/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      console.log(location.pathname)
+      $(`a[href*='${location.pathname}']`).addClass("active");
+
+      $("#current-year").text(new Date().getFullYear().toString())
+    });
+  </script>
+</body>
+
+</html>
+```
+
+### Pembuatan Struktur Project Selesai
+
+Sekarang, Anda telah membangun struktur file dan folder project.
+
+Langkah selanjutnya Adalah mencoba menjalankan aplikasi ini.
+
+Sebenarnya di bagian ini, langkahnya sama dengan bagian "[Cara Mencoba Kode Ini](#cara-mencoba-kode-ini)".
+
+Jadi, silakan baca bagian tersebut dan praktekkan.
 
 ## Bersambung...
