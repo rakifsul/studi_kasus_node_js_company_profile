@@ -18,7 +18,12 @@
         -   [Meng-install Dependencies](#meng-install-dependencies)
         -   [Membuat File ".env.example" dan ".env"](#membuat-file-envexample-dan-env)
         -   [Membuat File "app.js"](#membuat-file-appjs)
-        -   [Membuat Folder "controllers"](#membuat-folder-controllers)
+        -   [Membuat Subfolder "controllers"](#membuat-subfolder-controllers)
+        -   [Membuat Subfolder "databases"](#membuat-subfolder-databases)
+        -   [Membuat Subfolder "middlewares"](#membuat-subfolder-middlewares)
+        -   [Membuat Subfolder "routes"](#membuat-subfolder-routes)
+        -   [Mengkopi Subfolder "public" dari Contoh Project ke Project Ini](#mengkopi-subfolder-public-dari-contoh-project-ke-project-ini)
+        -   [Membuat Subfolder "lib", "sessions", dan "uploads"](#membuat-subfolder-lib-sessions-dan-uploads)
     -   [Bersambung...](#bersambung)
 
 ## Cara Mencoba Kode Ini
@@ -463,7 +468,7 @@ app.listen(port, function () {
 });
 ```
 
-### Membuat Folder "controllers"
+### Membuat Subfolder "controllers"
 
 Buatlah folder bernama "controllers", kemudian isi dengan file-file ini:
 
@@ -1184,5 +1189,243 @@ module.exports.postIndexSendMessage = async function (req, res, next) {
     }
 };
 ```
+
+### Membuat Subfolder "databases"
+
+Buatlah subfolder bernama "databases", kemudian buat lagi subfolder dari subfolder "databases" bernama "migrations".
+
+Di subfolder "databases/migrations", buat file bernama "20230316035229_init.js". Kemudian isi dengan kode ini:
+
+```
+const bcrypt = require("bcryptjs");
+
+/**
+ * @param { import("knex").Knex } knex
+ * @returns { Promise<void> }
+ */
+exports.up = function (knex) {
+    return knex.schema
+        .createTable("admins", function (table) {
+            table.increments("_id");
+            table.string("name", 1000).notNullable();
+            table.string("email", 1000).notNullable();
+            table.string("password", 1000).notNullable();
+            table.timestamps(true, true, true);
+        })
+        .createTable("messages", function (table) {
+            table.increments("_id");
+            table.string("name", 1000).notNullable();
+            table.string("email", 1000).notNullable();
+            table.string("message", 1000).notNullable();
+            table.timestamps(true, true, true);
+        })
+        .createTable("texts", function (table) {
+            table.increments("_id");
+            table.string("siteTitle", 1000).notNullable();
+            table.string("siteSEOTitle", 1000).notNullable();
+            table.string("siteDescription", 1000);
+            table.string("siteSEODescription", 1000);
+            table.string("aboutSubHeading", 1000);
+            table.string("aboutSubText", 5000);
+            table.string("infoSubHeading", 1000);
+            table.string("address", 1000);
+            table.string("phone", 1000);
+            table.string("email", 1000);
+            table.timestamps(true, true, true);
+        })
+        .createTable("skills", function (table) {
+            table.increments("_id");
+            table.string("title", 1000).notNullable();
+            table.integer("level").notNullable();
+            table.timestamps(true, true, true);
+        })
+        .createTable("services", function (table) {
+            table.increments("_id");
+            table.string("title", 1000).notNullable();
+            table.string("description", 1000).notNullable();
+            table.string("svg", 10000).notNullable();
+            table.timestamps(true, true, true);
+        })
+        .createTable("portfolios", function (table) {
+            table.increments("_id");
+            table.string("title", 1000).notNullable();
+            table.string("path", 1000).notNullable();
+            table.timestamps(true, true, true);
+        })
+        .createTable("carousels", function (table) {
+            table.increments("_id");
+            table.string("title", 1000).notNullable();
+            table.string("description", 1000);
+            table.string("path", 1000).notNullable();
+            table.timestamps(true, true, true);
+        })
+        .then(() => {
+            return knex("admins").insert([
+                {
+                    name: "admin",
+                    email: "admin@example.com",
+                    password: bcrypt.hashSync("admin", 12),
+                },
+            ]);
+        })
+        .then(() => {
+            return knex("texts").insert([
+                {
+                    siteTitle: "Company Name",
+                    siteSEOTitle: "Company Name - A leading software development agency...",
+                    siteDescription: "Company Name is a leading software development agency...",
+                    siteSEODescription: "Company Name is a leading software development agency...",
+                    aboutSubHeading: "Why?",
+                    aboutSubText: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit magnam ad doloremque illum iure repellat vero neque dolore consectetur, quidem corporis tenetur perspiciatis mollitia quos nemo architecto! Veniam facilis nesciunt, dignissimos in officia tempora repellat autem ipsum, nostrum accusamus aliquid reiciendis inventore quos aperiam voluptates debitis magni sit laborum obcaecati possimus necessitatibus quasi adipisci ducimus? Adipisci enim accusantium, dignissimos quae asperiores eaque tempore reprehenderit? Quaerat blanditiis sint rerum accusamus aspernatur provident sunt libero quibusdam totam. Magnam doloribus nisi, quas eligendi quasi modi, velit alias nulla quae animi excepturi officiis, ipsam voluptatum? Maxime reprehenderit tenetur facilis, unde obcaecati ratione id magni!",
+                    infoSubHeading: "Our Office",
+                    address: "Jl. Some Street No. 15, Some City, Some Province, Some Country",
+                    phone: "(021) yyy-xxxx",
+                    email: "admin@example.com",
+                },
+            ]);
+        });
+};
+
+/**
+ * @param { import("knex").Knex } knex
+ * @returns { Promise<void> }
+ */
+exports.down = function (knex) {
+    return knex.schema.dropTable("skills").dropTable("services").dropTable("portfolios").dropTable("carousels").dropTable("texts").dropTable("messages").dropTable("admins");
+};
+```
+
+Di subfolder "databases", buat file-file ini:
+
+-   connection.js
+-   knexfile.js
+
+Isi file "databases/connection.js" dengan kode ini:
+
+```
+const knex = require("knex");
+const knexfile = require("./knexfile");
+const path = require("path");
+
+let knexEnv;
+if (process.env.KNEX_ENV === "development") {
+    knexEnv = knexfile.development;
+} else if (process.env.KNEX_ENV === "staging") {
+    knexEnv = knexfile.staging;
+} else if (process.env.KNEX_ENV === "production") {
+    knexEnv = knexfile.production;
+} else {
+    throw Error("invalid environment.");
+}
+
+knexfile.development.connection.filename = path.join(__dirname, knexfile.development.connection.filename);
+
+console.log("BUGFIX WORKAROUND !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+console.log(knexfile.development.connection.filename);
+
+const db = knex(knexEnv);
+
+module.exports = db;
+```
+
+Isi file "databases/knexfile.js" dengan kode ini:
+
+```
+// Update with your config settings.
+require("dotenv").config({
+    path: "../.env",
+});
+
+/**
+ * @type { Object.<string, import("knex").Knex.Config> }
+ */
+module.exports = {
+    development: {
+        client: "sqlite3",
+        connection: {
+            filename: process.env.KNEX_DEV_DATABASE,
+        },
+        migrations: {
+            tableName: "knex_migrations",
+        },
+    },
+
+    staging: {
+        client: "mysql2",
+        connection: {
+            host: process.env.KNEX_STG_HOST,
+            port: process.env.KNEX_STG_PORT,
+            user: process.env.KNEX_STG_USER,
+            password: process.env.KNEX_STG_PASSWORD,
+            database: process.env.KNEX_STG_DATABASE,
+        },
+        migrations: {
+            tableName: "knex_migrations",
+        },
+    },
+
+    production: {
+        client: "mysql2",
+        connection: {
+            host: process.env.KNEX_PROD_HOST,
+            port: process.env.KNEX_PROD_PORT,
+            user: process.env.KNEX_PROD_USER,
+            password: process.env.KNEX_PROD_PASSWORD,
+            database: process.env.KNEX_PROD_DATABASE,
+        },
+        migrations: {
+            tableName: "knex_migrations",
+        },
+    },
+};
+```
+
+### Membuat Subfolder "middlewares"
+
+Buatlah subfolder bernama "middlewares", kemudian isi dengan file:
+
+-   sessionchecker.js
+
+Isi file "middlewares/sessionchecker.js" dengan kode ini:
+
+```
+// script ini tugasnya adalah menjadi middleware
+
+module.exports.notLoggedIn = (req, res, next) => {
+    if (!req.session.isLoggedIn) {
+        // jika varieble isLoggedIn dalam session false, null, atau undefined
+
+        // maka redirect ke /auth/login
+        return res.redirect("/auth/login");
+    }
+    next();
+};
+
+module.exports.loggedIn = (req, res, next) => {
+    if (req.session.isLoggedIn) {
+        // jika varieble isLoggedIn dalam session true
+
+        // maka redirect ke /admin
+        return res.redirect("/admin");
+    }
+    next();
+};
+```
+
+### Membuat Subfolder "routes"
+
+### Mengkopi Subfolder "public" dari Contoh Project ke Project Ini
+
+Sebenarnya, Anda bisa membuat subfolder ini satu demi satu, tapi agar lebih cepat dikopi saja.
+
+Folder ini hanya untuk kumpulan file-file statis seperti Gambar, CSS dan JavaScript browser.
+
+Jadi, bukalah contoh project "company_profile" yang disertakan kemudian copy folder "public"-nya ke project yang Anda buat ini.
+
+### Membuat Subfolder "lib", "sessions", dan "uploads"
+
+Buatlah subfolder "lib", "sessions", dan "uploads".
+
+Kosongkan isi subfolder-subfolder tersebut.
 
 ## Bersambung...
