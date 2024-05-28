@@ -43,6 +43,7 @@
         -   [Subfolder "databases"](#subfolder-databases)
             -   [File "databases/migrations/20230316035229_init.js"](#file-databasesmigrations20230316035229_initjs)
             -   [File "databases/knexfile.js"](#file-databasesknexfilejs)
+            -   [File "databases/connection.js"](#file-databasesconnectionjs)
         -   [Subfolder "routes"](#subfolder-routes)
         -   [Subfolder "middlewares"](#subfolder-middlewares)
         -   [Subfolder "controllers"](#subfolder-controllers)
@@ -3568,6 +3569,48 @@ staging: {
 production: {
         client: "mysql2",
 ```
+
+Terakhir, property-property objek tadi seperti: development, staging, dan production akan diekspor sehingga nantinya akan bisa digunakan dari script "databases/connection.js".
+
+#### File "databases/connection.js"
+
+File ini tujuannya adalah membuat koneksi database yang telah dipilih dan mengembalikan objek knex siap pakai.
+
+Kode ini akan mengimpor modul yang dibutuhkan:
+
+```
+const knex = require("knex");
+const knexfile = require("./knexfile");
+const path = require("path");
+```
+
+Selanjutnya kode ini:
+
+```
+let knexEnv;
+if (process.env.KNEX_ENV === "development") {
+    knexEnv = knexfile.development;
+} else if (process.env.KNEX_ENV === "staging") {
+    knexEnv = knexfile.staging;
+} else if (process.env.KNEX_ENV === "production") {
+    knexEnv = knexfile.production;
+} else {
+    throw Error("invalid environment.");
+}
+```
+
+Kode di atas akan membaca konfigurasi ".env" tentang apa environment yang dipilih.
+
+Jika "development", maka baca variabel yang diexport oleh "databases/knexfile.js", yakni knexfile.development.
+
+Ingat kembali file "database/knexfile.js" bagian ini:
+
+```
+module.exports = {
+    development
+```
+
+Di sana ada "module.exports"-nya bukan?
 
 ### Subfolder "routes"
 
