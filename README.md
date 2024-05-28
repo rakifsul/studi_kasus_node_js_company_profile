@@ -36,6 +36,7 @@
             -   [Script "db:dev:refresh"](#script-dbdevrefresh)
             -   [Script "db:stg:refresh"](#script-dbstgrefresh)
             -   [Script "db:prod:refresh"](#script-dbprodrefresh)
+    -   [File ".env.example" dan ".env"](#file-envexample-dan-env)
     -   [Bersambung...](#bersambung)
 
 ## Cara Mencoba Kode Ini
@@ -2968,5 +2969,95 @@ Sama dengan "db:dev:refresh", tapi untuk environment staging.
 #### Script "db:prod:refresh"
 
 Sama dengan "db:dev:refresh", tapi untuk environment production.
+
+## File ".env.example" dan ".env"
+
+Sebenarnya, di antara kedua file ini ada kesamaan.
+
+Yakni isinya yang berupa konfigurasi aplikasi.
+
+Bedanya, file yang dibaca adalah ".env".
+
+Adapun, ".env.example" hanya template atau contoh untuk ".env".
+
+Dalam kaitannya dengan repository git, ".env" seharusnya tidak di-push karena mengandung informasi sensitif.
+
+Yang di-push ke repository hanya contohnya saja, yakni ".env.example" sebagai panduan untuk developer.
+
+Sekarang, saya bahas baris-baris dari ".env.example".
+
+```
+BASE_URL=http://localhost:3000
+```
+
+Kode di atas menandakan bahwa base URL default dari aplikasi ini adalah berdomain "localhost" di port 3000.
+
+Nantinya di "app.js" port tersebut akan dibaca.
+
+```
+SESSION_SECRET=secret1
+```
+
+Kode di atas akan dibaca di "app.js" saat menginisialisasi modul session sebagai setting-an secret-nya.
+
+```
+# pilih salah satu
+KNEX_ENV=development
+#KNEX_ENV=staging
+#KNEX_ENV=production
+```
+
+Kode di atas ada 3 baris, tapi hanya 1 saja yang seharusnya diaktifkan. Yang lain dinonaktifkan dengan tanda pagar "#".
+
+Tujuan dari kode di atas adalah untuk menentukan environment mana yang akan digunakan developer.
+
+Jika development, maka tanda pagar dihapus dari "KNEX_ENV=development", yang lainnya tetap diberi tanda pagar.
+
+Jika staging, maka tanda pagar dihapus dari "KNEX_ENV=staging", yang lainnya tetap diberi tanda pagar.
+
+Jika production, maka tanda pagar dihapus dari "KNEX_ENV=production", yang lainnya tetap diberi tanda pagar.
+
+```
+# development database (jangan gunakan path. nama file saja.)
+KNEX_DEV_DATABASE=company_profile-dev.sqlite3
+```
+
+Kode di atas adalah konfigurasi database untuk environment development, perhatikan ada "\_DEV" nya.
+
+Di environment tersebut, kita menggunakan SQLite dan bukan MySQL.
+
+```
+# staging database
+KNEX_STG_HOST=127.0.0.1
+KNEX_STG_PORT=3306
+KNEX_STG_USER=root
+KNEX_STG_PASSWORD=root
+KNEX_STG_DATABASE=company_profile-stg
+```
+
+Kode di atas adalah konfigurasi database untuk environment staging, perhatikan ada "\_STG" nya.
+
+Di environment tersebut, kita menggunakan MySQL.
+
+Host-nya adalah "127.0.0.1".
+
+Port-nya adalah "3306".
+
+Username-nya adalah "root".
+
+Password-nya adalah "root".
+
+Nama database-nya adalah "company_profile-stg".
+
+Penjelasan serupa juga berlaku pada bagian ini:
+
+```
+# production database
+KNEX_PROD_HOST=127.0.0.1
+KNEX_PROD_PORT=3306
+KNEX_PROD_USER=root
+KNEX_PROD_PASSWORD=root
+KNEX_PROD_DATABASE=company_profile-prod
+```
 
 ## Bersambung...
