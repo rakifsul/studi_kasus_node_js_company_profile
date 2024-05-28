@@ -3813,7 +3813,7 @@ Kode di atas memiliki fungsi notLoggedIn yang parameternya adalah req, res, dan 
 
 -   req maksudnya adalah request
 -   res maksudnya adalah response
--   next cukup jelas
+-   next jika dipanggil sebagai fungsi maka akan melanjutkan ke middleware selanjutnya.
 
 Di sini:
 
@@ -3849,7 +3849,7 @@ Kode di atas memiliki fungsi notLoggedIn yang parameternya adalah req, res, dan 
 
 -   req maksudnya adalah request
 -   res maksudnya adalah response
--   next cukup jelas
+-   next jika dipanggil sebagai fungsi maka akan melanjutkan ke middleware selanjutnya.
 
 Di sini:
 
