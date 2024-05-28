@@ -3612,6 +3612,26 @@ module.exports = {
 
 Di sana ada "module.exports"-nya bukan?
 
+Sekarang kode ini:
+
+```
+console.log("BUGFIX WORKAROUND !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+knexfile.development.connection.filename = path.join(__dirname, knexfile.development.connection.filename);
+console.log(knexfile.development.connection.filename);
+```
+
+Kode di atas akan memodifikasi objek property dari knexfile agar filename menggunakan absolute path.
+
+Saya melakukan ini karena saat mencoba dengan SQLite tanpa itu gagal terus.
+
+Kode di bawah ini akan membuat objek knex siap pakai dan mengekspornya agar nantinya bisa digunakan di script lain:
+
+```
+const db = knex(knexEnv);
+
+module.exports = db;
+```
+
 ### Subfolder "routes"
 
 ### Subfolder "middlewares"
