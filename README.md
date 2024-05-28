@@ -8,7 +8,7 @@
         -   [Mengunjungi Aplikasi](#mengunjungi-aplikasi)
         -   [Mengubah Favicon](#mengubah-favicon)
     -   [Source Code Project Ini](#source-code-project-ini)
-    -   [Jika Ingin Traktir Saya](#jika-ingin-traktir-saya)
+    -   [Jika Ingin Mentraktir Saya](#jika-ingin-mentraktir-saya)
     -   [Pendahuluan](#pendahuluan)
     -   [Tujuan](#tujuan)
     -   [Prasyarat](#prasyarat)
@@ -171,15 +171,15 @@ Untuk mengubah favicon di halaman depan, replace favicon.png yang ada di folder 
 
 Source code project ini ada di folder "company_profile".
 
-## Jika Ingin Traktir Saya
+## Jika Ingin Mentraktir Saya
 
 Artikel ini gratis.
 
-Jika Anda ingin traktir saya, kunjungi link saya:
+Jika Anda ingin mentraktir saya, kunjungi link saya:
 
 https://taplink.cc/rakifsul
 
-Di sana ada link untuk traktirnya dan link lainnya.
+Di sana ada link untuk mentraktir saya dan link lainnya.
 
 Selamat menikmati.
 
@@ -2961,6 +2961,8 @@ npx knex migrate:rollback --env development --knexfile ./databases/knexfile.js &
 Artinya, database yang digunakan dalam environment development di project ini akan di-rollback (dihapus) kemudian dibuat ulang.
 
 Dengan kata lain databasenya akan di-refresh.
+
+Perintah "npx" membutuhkan koneksi internet.
 
 #### Script "db:stg:refresh"
 
