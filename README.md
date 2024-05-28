@@ -3761,6 +3761,112 @@ Selain itu, jika masuk bagian login, maka yang sudah login harus difilter.
 
 ### Subfolder "middlewares"
 
+Subfolder ini berisi script middleware yang digunakan pada script-script di subfolder "routes".
+
+Saat ini hanya satu script saja yang kita gunakan: "sessionchecker.js".
+
+Berikut ini adalah kodenya:
+
+```
+// script ini tugasnya adalah menjadi middleware
+
+module.exports.notLoggedIn = (req, res, next) => {
+    if (!req.session.isLoggedIn) {
+        // jika varieble isLoggedIn dalam session false, null, atau undefined
+
+        // maka redirect ke /auth/login
+        return res.redirect("/auth/login");
+    }
+    next();
+};
+
+module.exports.loggedIn = (req, res, next) => {
+    if (req.session.isLoggedIn) {
+        // jika varieble isLoggedIn dalam session true
+
+        // maka redirect ke /admin
+        return res.redirect("/admin");
+    }
+    next();
+};
+```
+
+Ada dua fungsi yang diekspor: notLoggedIn dan loggedIn.
+
+Seperti yang telah saya bahas sebelumnya, auth menggunakan loggedIn dan admin menggunakan notLoggedIn.
+
+Kode ini:
+
+```
+module.exports.notLoggedIn = (req, res, next) => {
+    if (!req.session.isLoggedIn) {
+        // jika varieble isLoggedIn dalam session false, null, atau undefined
+
+        // maka redirect ke /auth/login
+        return res.redirect("/auth/login");
+    }
+    next();
+};
+```
+
+Kode di atas memiliki fungsi notLoggedIn yang parameternya adalah req, res, dan next.
+
+-   req maksudnya adalah request
+-   res maksudnya adalah response
+-   next cukup jelas
+
+Di sini:
+
+```
+if (!req.session.isLoggedIn) {
+        // jika varieble isLoggedIn dalam session false, null, atau undefined
+```
+
+Kita mempertanyakan apakah pengunjung memiliki session login.
+
+Jika tidak, maka redirect ke halaman login:
+
+```
+        // maka redirect ke /auth/login
+        return res.redirect("/auth/login");
+```
+
+Sekarang, kode ini:
+
+```
+module.exports.loggedIn = (req, res, next) => {
+    if (req.session.isLoggedIn) {
+        // jika varieble isLoggedIn dalam session true
+
+        // maka redirect ke /admin
+        return res.redirect("/admin");
+    }
+    next();
+};
+```
+
+Kode di atas memiliki fungsi notLoggedIn yang parameternya adalah req, res, dan next.
+
+-   req maksudnya adalah request
+-   res maksudnya adalah response
+-   next cukup jelas
+
+Di sini:
+
+```
+  if (req.session.isLoggedIn) {
+        // jika varieble isLoggedIn dalam session true
+```
+
+Kita mempertanyakan apakah pengunjung memiliki session login.
+
+Jika ya, maka redirect ke halaman admin:
+
+```
+        // maka redirect ke /admin
+        return res.redirect("/admin");
+```
+
 ### Subfolder "controllers"
 
 ### Subfolder "views"
