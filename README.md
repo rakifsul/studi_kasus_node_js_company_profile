@@ -36,7 +36,8 @@
             -   [Script "db:dev:refresh"](#script-dbdevrefresh)
             -   [Script "db:stg:refresh"](#script-dbstgrefresh)
             -   [Script "db:prod:refresh"](#script-dbprodrefresh)
-    -   [File ".env.example" dan ".env"](#file-envexample-dan-env)
+        -   [File ".env.example" dan ".env"](#file-envexample-dan-env)
+        -   [File "app.js"](#file-appjs)
     -   [Bersambung...](#bersambung)
 
 ## Cara Mencoba Kode Ini
@@ -2972,7 +2973,7 @@ Sama dengan "db:dev:refresh", tapi untuk environment staging.
 
 Sama dengan "db:dev:refresh", tapi untuk environment production.
 
-## File ".env.example" dan ".env"
+### File ".env.example" dan ".env"
 
 Sebenarnya, di antara kedua file ini ada kesamaan.
 
@@ -3061,5 +3062,248 @@ KNEX_PROD_USER=root
 KNEX_PROD_PASSWORD=root
 KNEX_PROD_DATABASE=company_profile-prod
 ```
+
+### File "app.js"
+
+File "app.js" adalah file bootstrapper aplikasi ini.
+
+Di script "package.json" file "app.js" dijadikan input untuk Node JS.
+
+Dalam file ini routes-routes dimuat sehingga penanganan request web dari pengunjung akan dilakukan di sana.
+
+Di file "app.js" express dan middleware-nya juga akan di-setup.
+
+Logger, json parser, body parser, session, cookie, flash, upload (multer) akan di-setup di file "app.js".
+
+Di "app.js" view engine yang menggunakan EJS juga di-setup.
+
+Di file ini juga server akan melakukan listen ke port yang tertulis pada "BASE_URL" di file ".env".
+
+Sekarang, saya akan membahas kodenya.
+
+```
+// begin: import modules
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const session = require("express-session");
+const FileStore = require("session-file-store")(session);
+const flash = require("connect-flash");
+const multer = require("multer");
+const { v4: uuidv4 } = require("uuid");
+const url = require("url");
+require("dotenv").config();
+
+const indexRouter = require("./routes/index");
+const adminRouter = require("./routes/admin");
+const authRouter = require("./routes/auth");
+// end: import modules
+```
+
+Kode di atas akan mengimpor semua modul yang dibutuhkan "app.js".
+
+Perhatikan bahwa "indexRouter", "adminRouter", dan "authRouter" diambil dari folder project:
+
+```
+const indexRouter = require("./routes/index");
+const adminRouter = require("./routes/admin");
+const authRouter = require("./routes/auth");
+```
+
+Lainnya dari folder "node_modules":
+
+```
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const session = require("express-session");
+const FileStore = require("session-file-store")(session);
+const flash = require("connect-flash");
+const multer = require("multer");
+const { v4: uuidv4 } = require("uuid");
+const url = require("url");
+```
+
+Adapun kode ini:
+
+```
+require("dotenv").config();
+```
+
+Akan menginisialisasi modul "dotenv" agar bisa membaca ".env".
+
+Selanjutnya...
+
+```
+// inisialisasi expressjs
+const app = express();
+```
+
+Kode di atas akan menginisialisasi express, sehingga objek express akan dimasukkan ke variabel "app".
+
+```
+// set view folder ke folder "views"
+app.set("views", path.join(__dirname, "views"));
+
+// set view engine yang digunakan adalah EJS
+app.set("view engine", "ejs");
+```
+
+Kode di atas akan men-set view folder di folder "views".
+
+Selanjutnya, ditentukan bahwa view engine-nya adalah EJS.
+
+EJS itu sendiri adalah view engine atau template engine yang memiliki sintaks mirip HTML.
+
+EJS itu sendiri bisa diprogram dengan bahasa yang menyerupai JavaScript.
+
+Selanjutnya kode ini:
+
+```
+// inisialisasi morgan
+app.use(logger("dev"));
+
+// parse body json
+app.use(express.json({ limit: "100mb" }));
+
+// parse body urlencoded
+app.use(
+    express.urlencoded({
+        limit: "100mb",
+        extended: true,
+        parameterLimit: 100000,
+    })
+);
+
+// setup multer agar bisa upload gambar
+app.use(
+    multer({
+        storage: multer.diskStorage({
+            destination: (req, file, callback) => {
+                callback(null, "./uploads");
+            },
+            filename: (req, file, callback) => {
+                callback(null, uuidv4() + "-" + file.originalname);
+            },
+        }),
+        fileFilter: (req, file, callback) => {
+            if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg" || file.mimetype == "image/gif") {
+                callback(null, true);
+            } else {
+                callback(null, false);
+            }
+        },
+    }).single("upload")
+);
+
+// parse cookie header
+app.use(cookieParser());
+
+// agar bisa menggunakan session
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        // store: new FileStore(), // jika di-enable simpan session di file (ada bug nya)
+        resave: false,
+        saveUninitialized: false,
+    })
+);
+
+// inisialisasi connect-flash
+app.use(flash());
+```
+
+Kode di atas akan mendaftarkan beragam middleware secara global.
+
+Logger, json parser, body parser, session, cookie, flash, upload (multer) adalah contohnya.
+
+Middleware-middleware itu memiliki kegunaan yang berbeda-beda.
+
+Dengan multer misalnya, aplikasi ini jadi dapat menangani file upload.
+
+Untuk yang lainnya Anda bisa cek di dokumentasinya masing-masing.
+
+Selanjutnya kode ini:
+
+```
+// setup folder statis untuk menyimpan resources
+app.use("/public", express.static(path.join(__dirname, "public")));
+app.use("/uploads", express.static(__dirname + "/uploads"));
+```
+
+Kode di atas akan menentukan folder file statis bernama "public" dan menempatkannya pada path URL bernama "/public".
+
+Jadi, "BASE_URL/public" (misal: https://localhost:3000/public) akan mengakses folder tersebut.
+
+Isi foldernya itu sendiri adalah file gambar, file JavaScript, dan file CSS.
+
+Isi subfolder vendor-nya itu juga serupa, hanya saja dari pihak ketiga, seperti:
+
+-   bootstrap
+-   chart.js
+-   jquery
+-   jquery-sortable
+
+Selanjutnya kode ini:
+
+```
+// route admin ada di path "/admin" nantinya pada URL.
+app.use("/admin", adminRouter);
+
+// route auth ada di path "/auth" nantinya pada URL.
+app.use("/auth", authRouter);
+
+// route "/" ada di path "/" nantinya pada URL.
+app.use("/", indexRouter);
+```
+
+Kode di atas akan mendaftarkan routes-routes sebagai middleware global.
+
+Route untuk admin akan diakses melalui "BASE_URL/admin".
+
+Route untuk auth akan diakses melalui "BASE_URL/auth".
+
+Route untuk index akan diakses melalui "BASE_URL/".
+
+Selanjutnya kode ini:
+
+```
+// setup halaman error 404 jika terjadi
+app.use(function (req, res, next) {
+    next(createError(404));
+});
+
+// setup halaman error lainnya jika terjadi
+app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
+    res.render("error", {
+        error: {
+            message: err.message,
+            status: err.status,
+            stack: err.stack,
+        },
+    });
+});
+```
+
+Kode di atas adalah middleware untuk menangani error.
+
+Response nya adalah http error code.
+
+Dan yang terakhir:
+
+```
+// jalankan server pada port yang ada di BASE_URL atau 3000 jika tidak ada
+const port = url.parse(process.env.BASE_URL).port | 3000;
+app.listen(port, function () {
+    console.log(`server berjalan di port ${port}`);
+});
+```
+
+kode di atas akan menjalankan server express di port yang didapat dari BASE_URL atau jika tidak ada, yang digunakan adalah port 3000.
 
 ## Bersambung...
