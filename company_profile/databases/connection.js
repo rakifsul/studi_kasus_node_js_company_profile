@@ -13,9 +13,8 @@ if (process.env.KNEX_ENV === "development") {
     throw Error("invalid environment.");
 }
 
-knexfile.development.connection.filename = path.join(__dirname, knexfile.development.connection.filename);
-
 console.log("BUGFIX WORKAROUND !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+knexfile.development.connection.filename = path.join(__dirname, knexfile.development.connection.filename);
 console.log(knexfile.development.connection.filename);
 
 const db = knex(knexEnv);

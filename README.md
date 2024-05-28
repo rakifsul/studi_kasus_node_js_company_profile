@@ -40,6 +40,13 @@
         -   [File "app.js"](#file-appjs)
         -   [Subfolder "public"](#subfolder-public)
         -   [Subfolder "lib", "sessions", dan "uploads"](#subfolder-lib-sessions-dan-uploads)
+        -   [Subfolder "databases"](#subfolder-databases)
+            -   [File "databases/migrations/20230316035229_init.js"](#file-databasesmigrations20230316035229_initjs)
+            -   [File "databases/knexfile.js"](#file-databasesknexfilejs)
+        -   [Subfolder "routes"](#subfolder-routes)
+        -   [Subfolder "middlewares"](#subfolder-middlewares)
+        -   [Subfolder "controllers"](#subfolder-controllers)
+        -   [Subfolder "views"](#subfolder-views)
     -   [Bersambung...](#bersambung)
 
 ## Cara Mencoba Kode Ini
@@ -3330,5 +3337,244 @@ app.use(
 ```
 
 Subfolder "uplaods" berisi file-file gambar yang telah ter-upload.
+
+### Subfolder "databases"
+
+Subfolder ini terdiri dari 2 file dan satu subfolder.
+
+Dua file tersebut adalah "databases/knexfile.js" dan "databases/connection.js".
+
+Satu subfolder tersebut adalah "migrations" yang berisi 1 file migrasi berakhiran "\_init".
+
+Di subfolder ini juga file database SQLite ditempatkan jika kita menggunakan environment development.
+
+#### File "databases/migrations/20230316035229_init.js"
+
+Saat perintah migrasi yang ada di script "package.json" dijalankan, misalnya "db:dev:refresh", maka file migrasi berakhiran "\_init" tadi akan dibaca dan diterapkan pada database target. Saat itu tabel-tabel dibuat dan diisi sesuai instruksi di file migrasi berakhiran "\_init" ini:
+
+```
+const bcrypt = require("bcryptjs");
+
+/**
+ * @param { import("knex").Knex } knex
+ * @returns { Promise<void> }
+ */
+exports.up = function (knex) {
+    return knex.schema
+        .createTable("admins", function (table) {
+            table.increments("_id");
+            table.string("name", 1000).notNullable();
+            table.string("email", 1000).notNullable();
+            table.string("password", 1000).notNullable();
+            table.timestamps(true, true, true);
+        })
+        .createTable("messages", function (table) {
+            table.increments("_id");
+            table.string("name", 1000).notNullable();
+            table.string("email", 1000).notNullable();
+            table.string("message", 1000).notNullable();
+            table.timestamps(true, true, true);
+        })
+        .createTable("texts", function (table) {
+            table.increments("_id");
+            table.string("siteTitle", 1000).notNullable();
+            table.string("siteSEOTitle", 1000).notNullable();
+            table.string("siteDescription", 1000);
+            table.string("siteSEODescription", 1000);
+            table.string("aboutSubHeading", 1000);
+            table.string("aboutSubText", 5000);
+            table.string("infoSubHeading", 1000);
+            table.string("address", 1000);
+            table.string("phone", 1000);
+            table.string("email", 1000);
+            table.timestamps(true, true, true);
+        })
+        .createTable("skills", function (table) {
+            table.increments("_id");
+            table.string("title", 1000).notNullable();
+            table.integer("level").notNullable();
+            table.timestamps(true, true, true);
+        })
+        .createTable("services", function (table) {
+            table.increments("_id");
+            table.string("title", 1000).notNullable();
+            table.string("description", 1000).notNullable();
+            table.string("svg", 10000).notNullable();
+            table.timestamps(true, true, true);
+        })
+        .createTable("portfolios", function (table) {
+            table.increments("_id");
+            table.string("title", 1000).notNullable();
+            table.string("path", 1000).notNullable();
+            table.timestamps(true, true, true);
+        })
+        .createTable("carousels", function (table) {
+            table.increments("_id");
+            table.string("title", 1000).notNullable();
+            table.string("description", 1000);
+            table.string("path", 1000).notNullable();
+            table.timestamps(true, true, true);
+        })
+        .then(() => {
+            return knex("admins").insert([
+                {
+                    name: "admin",
+                    email: "admin@example.com",
+                    password: bcrypt.hashSync("admin", 12),
+                },
+            ]);
+        })
+        .then(() => {
+            return knex("texts").insert([
+                {
+                    siteTitle: "Company Name",
+                    siteSEOTitle: "Company Name - A leading software development agency...",
+                    siteDescription: "Company Name is a leading software development agency...",
+                    siteSEODescription: "Company Name is a leading software development agency...",
+                    aboutSubHeading: "Why?",
+                    aboutSubText: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit magnam ad doloremque illum iure repellat vero neque dolore consectetur, quidem corporis tenetur perspiciatis mollitia quos nemo architecto! Veniam facilis nesciunt, dignissimos in officia tempora repellat autem ipsum, nostrum accusamus aliquid reiciendis inventore quos aperiam voluptates debitis magni sit laborum obcaecati possimus necessitatibus quasi adipisci ducimus? Adipisci enim accusantium, dignissimos quae asperiores eaque tempore reprehenderit? Quaerat blanditiis sint rerum accusamus aspernatur provident sunt libero quibusdam totam. Magnam doloribus nisi, quas eligendi quasi modi, velit alias nulla quae animi excepturi officiis, ipsam voluptatum? Maxime reprehenderit tenetur facilis, unde obcaecati ratione id magni!",
+                    infoSubHeading: "Our Office",
+                    address: "Jl. Some Street No. 15, Some City, Some Province, Some Country",
+                    phone: "(021) yyy-xxxx",
+                    email: "admin@example.com",
+                },
+            ]);
+        });
+};
+
+/**
+ * @param { import("knex").Knex } knex
+ * @returns { Promise<void> }
+ */
+exports.down = function (knex) {
+    return knex.schema.dropTable("skills").dropTable("services").dropTable("portfolios").dropTable("carousels").dropTable("texts").dropTable("messages").dropTable("admins");
+};
+```
+
+Pertama, kode ini akan mengimpor "bcryptjs" karena akan digunakan saat menggenerate hash dari password admin:
+
+```
+const bcrypt = require("bcryptjs");
+```
+
+Selanjutnya kode ini akan terpanggil saat perintah migrasi pada command line dijalankan:
+
+```
+exports.up = function (knex) {
+    return knex.schema
+        .createTable("admins", function (table) {
+            table.increments("_id");
+            table.string("name", 1000).notNullable();
+            table.string("email", 1000).notNullable();
+            table.string("password", 1000).notNullable();
+            table.timestamps(true, true, true);
+        })
+        // ...
+```
+
+Sedangkan, kode ini akan terpanggil saat perintah rollback pada command line dijalankan:
+
+```
+exports.down = function (knex) {
+    return knex.schema.dropTable("skills").dropTable("services").dropTable("portfolios").dropTable("carousels").dropTable("texts").dropTable("messages").dropTable("admins");
+};
+```
+
+Secara umum berarti, saat migrate, buat tabel dan isi sebagiannya dan saat rollback drop tabel-tabel tersebut.
+
+Fungsi pembentukan schema-nya saya kira cukup terjelaskan sendiri.
+
+"createTable" jelas artinya untuk membuat table.
+
+"table.increments("\_id")" jelas artinya buat kolom id yang auto increment.
+
+Jika Anda paham SQL saya kira itu tidak terlalu sulit dipahami.
+
+Mungkin ini saja yang saya bahas:
+
+```
+.then(() => {
+            return knex("admins").insert([
+                {
+                    name: "admin",
+                    email: "admin@example.com",
+                    password: bcrypt.hashSync("admin", 12),
+                },
+            ]);
+        })
+```
+
+Kode di atas akan meng-insert entry admin bernama "admin" dengan email "admin@example.com" dan ber-password "admin". Kemudian password tadi disimpan ke database dalam bentuk hash.
+
+Perintah insert tadi akan dijalankan setelah tabel-tabel dibuat di saat migrasi.
+
+#### File "databases/knexfile.js"
+
+File ini dimulai dari kode:
+
+```
+// Update with your config settings.
+require("dotenv").config({
+    path: "../.env",
+});
+```
+
+Kode di atas akan membaca file ".env" karena kita akan menggunakan sebagian barisnya untuk mengonfigurasi knex.
+
+Selanjutnya kode ini:
+
+```
+development: {
+        client: "sqlite3",
+        connection: {
+            filename: process.env.KNEX_DEV_DATABASE,
+        },
+        migrations: {
+            tableName: "knex_migrations",
+        },
+    },
+```
+
+Kode di atas adalah definisi konfigurasi knex untuk environment development.
+
+Tampak bahwa database yang digunakan adalah SQLite3:
+
+```
+client: "sqlite3",
+```
+
+nama file database-nya adalah yang ada pada baris "KNEX_DEV_DATABASE" di ".env":
+
+```
+KNEX_DEV_DATABASE=company_profile-dev.sqlite3
+```
+
+Pembacaannya yakni dengan cara mengakses variabel:
+
+```
+process.env.KNEX_DEV_DATABASE
+```
+
+Penjelasan yang sama berlaku untuk kode sisanya.
+
+Bedanya di sana menggunakan MySQL:
+
+```
+staging: {
+        client: "mysql2",
+```
+
+```
+production: {
+        client: "mysql2",
+```
+
+### Subfolder "routes"
+
+### Subfolder "middlewares"
+
+### Subfolder "controllers"
+
+### Subfolder "views"
 
 ## Bersambung...
