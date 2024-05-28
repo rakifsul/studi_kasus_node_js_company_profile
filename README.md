@@ -45,6 +45,9 @@
             -   [File "databases/knexfile.js"](#file-databasesknexfilejs)
             -   [File "databases/connection.js"](#file-databasesconnectionjs)
         -   [Subfolder "routes"](#subfolder-routes)
+            -   [File "routes/index.js"](#file-routesindexjs)
+            -   [File "routes/auth.js"](#file-routesauthjs)
+            -   [File "routes/admin.js"](#file-routesadminjs)
         -   [Subfolder "middlewares"](#subfolder-middlewares)
         -   [Subfolder "controllers"](#subfolder-controllers)
         -   [Subfolder "views"](#subfolder-views)
@@ -1355,9 +1358,8 @@ if (process.env.KNEX_ENV === "development") {
     throw Error("invalid environment.");
 }
 
-knexfile.development.connection.filename = path.join(__dirname, knexfile.development.connection.filename);
-
 console.log("BUGFIX WORKAROUND !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+knexfile.development.connection.filename = path.join(__dirname, knexfile.development.connection.filename);
 console.log(knexfile.development.connection.filename);
 
 const db = knex(knexEnv);
@@ -3633,6 +3635,129 @@ module.exports = db;
 ```
 
 ### Subfolder "routes"
+
+Subfolder "routes" berisi kode routing web request dari pengunjung ke controller dan sebagiannya setelah melewati middleware sessionchecker.
+
+Di subfolder tersebut ada dua jenis request: get dan post.
+
+Adapun routes dipisahkan menjadi tiga script: "admin.js", "auth.js", dan "index.js".
+
+Berikut ini penjelasannya.
+
+#### File "routes/index.js"
+
+Routes "index" merupakan routes yang diakses melalui path "/" pada URL.
+
+Jika Anda lupa lihat kembali pembahasan "app.js".
+
+```
+// script ini tugasnya adalah menghubungkan controllers/index.js dengan route.
+
+const express = require("express");
+const indexController = require("../controllers/index");
+
+// buat objek router agar bisa memakai get, post, dan lain-lain.
+const router = express.Router();
+
+router.get("/", indexController.getIndex);
+
+router.post("/send-message", indexController.postIndexSendMessage);
+
+module.exports = router;
+
+```
+
+Pada kode "routes/index.js" di atas, tampak tidak ada middleware yang digunakan.
+
+Itu karena pada dasarnya route ini hanya mengarahkan request "/" atau homepage dan "/send-message" untuk mengirim contact us.
+
+#### File "routes/auth.js"
+
+Routes "auth" merupakan routes yang diakses melalui path "/auth" pada URL.
+
+Routes "auth" merupakan penghubung dari routes "index" ke routes "admin".
+
+Itu karena pada routes ini, controller "auth" yang menangani login dan register akan dihubungkan.
+
+Berikut ini kodenya:
+
+```
+// script ini tugasnya adalah menghubungkan controllers/auth.js dengan route.
+
+const express = require("express");
+const authController = require("../controllers/auth");
+
+// session checker digunakan untuk authorization
+const sessionChecker = require("../middlewares/sessionchecker");
+
+// buat objek router agar bisa memakai get, post, dan lain-lain.
+const router = express.Router();
+
+router.get("/login", sessionChecker.loggedIn, authController.getLogin);
+
+router.post("/login", sessionChecker.loggedIn, authController.postLogin);
+
+router.get("/register", authController.getRegister);
+
+router.post("/register", authController.postRegister);
+
+router.get("/logout", authController.getLogout);
+
+module.exports = router;
+
+```
+
+Pada kode di atas, tampak bahwa middleware sessionchecker digunakan di beberapa baris. Oleh karena itulah middleware tersebut diimpor.
+
+Berikut ini contoh baris yang menggunakannya:
+
+```
+router.get("/login", sessionChecker.loggedIn, authController.getLogin);
+
+router.post("/login", sessionChecker.loggedIn, authController.postLogin);
+```
+
+Pada kode di atas, tampak juga fungsi yang digunakan adalah sessionChecker.loggedIn yang akan dijelaskan pada pembahasan bagian middlewares.
+
+#### File "routes/admin.js"
+
+Routes "admin" merupakan routes yang diakses melalui path "/admin" pada URL.
+
+Routes "admin" merupakan routes yang mengarahkan request seputar admin dashboard.
+
+Middleware sessionchecker banyak digunakan di sini.
+
+Berikut ini adalah potongan kodenya:
+
+```
+// script ini tugasnya adalah menghubungkan controllers/admin.js dengan route.
+
+const express = require("express");
+const adminController = require("../controllers/admin");
+
+// session checker digunakan untuk authorization
+const sessionChecker = require("../middlewares/sessionchecker");
+
+// buat objek router agar bisa memakai get, post, dan lain-lain.
+const router = express.Router();
+
+router.get("/", sessionChecker.notLoggedIn, adminController.getIndex);
+
+//...
+```
+
+Pada kode di atas, tampak juga fungsi yang digunakan adalah sessionChecker.notLoggedIn yang akan dijelaskan pada pembahasan bagian middlewares.
+
+Jika kita bandingkan dengan routes "auth" tadi:
+
+-   auth menggunakan sessionChecker.loggedIn
+-   admin menggunakan sessionChecker.notLoggedIn
+
+Terasa masuk akal, bukan?
+
+Jika masuk ke bagian admin, maka yang belum login harus difilter.
+
+Selain itu, jika masuk bagian login, maka yang sudah login harus difilter.
 
 ### Subfolder "middlewares"
 
