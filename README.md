@@ -38,6 +38,8 @@
             -   [Script "db:prod:refresh"](#script-dbprodrefresh)
         -   [File ".env.example" dan ".env"](#file-envexample-dan-env)
         -   [File "app.js"](#file-appjs)
+        -   [Subfolder "public"](#subfolder-public)
+        -   [Subfolder "lib", "sessions", dan "uploads"](#subfolder-lib-sessions-dan-uploads)
     -   [Bersambung...](#bersambung)
 
 ## Cara Mencoba Kode Ini
@@ -3305,5 +3307,28 @@ app.listen(port, function () {
 ```
 
 kode di atas akan menjalankan server express di port yang didapat dari BASE_URL atau jika tidak ada, yang digunakan adalah port 3000.
+
+### Subfolder "public"
+
+Saya telah menyinggung subfolder ini pada bagian sebelumnya. Jadi kira-kira seperti itulah.
+
+### Subfolder "lib", "sessions", dan "uploads"
+
+Subfolder-subfolder ini isinya kosong, tapi bukan berarti tidak ada gunanya.
+
+Subfolder lib bisa diisi dengan kumpulan fungsi Node JS custom buatan Anda jika mau.
+
+Subfolder "sessions" berisi file-file sessions jika kita menggunakan jenis session berupa file yang bisa dilakukan di "app.js":
+
+```
+// agar bisa menggunakan session
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        // store: new FileStore(), // jika di-enable simpan session di file (ada bug nya)
+        // ...
+```
+
+Subfolder "uplaods" berisi file-file gambar yang telah ter-upload.
 
 ## Bersambung...
