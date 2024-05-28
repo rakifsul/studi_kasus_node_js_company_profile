@@ -29,6 +29,13 @@
             -   [Membuat Subfolder "views/auth"](#membuat-subfolder-viewsauth)
             -   [Membuat Subfolder "views/index"](#membuat-subfolder-viewsindex)
         -   [Pembuatan Struktur Project Selesai](#pembuatan-struktur-project-selesai)
+    -   [Pembahasan](#pembahasan)
+        -   [File "package.json"](#file-packagejson)
+            -   [Script "start"](#script-start)
+            -   [Script "dev"](#script-dev)
+            -   [Script "db:dev:refresh"](#script-dbdevrefresh)
+            -   [Script "db:stg:refresh"](#script-dbstgrefresh)
+            -   [Script "db:prod:refresh"](#script-dbprodrefresh)
     -   [Bersambung...](#bersambung)
 
 ## Cara Mencoba Kode Ini
@@ -204,7 +211,6 @@ Tujuan dari artikel ini adalah:
 -   Pembaca mengenal apa itu aplikasi company profile.
 -   Pembaca mampu membuat aplikasi company profile yang dinamis dengan Node JS dan database dari jenis SQL (SQLite dan MySQL).
 -   Pembaca mampu menerapkan sistem login dan register pada aplikasi company profile.
--
 
 ## Prasyarat
 
@@ -2849,5 +2855,118 @@ Langkah selanjutnya Adalah mencoba menjalankan aplikasi ini.
 Sebenarnya di bagian ini, langkahnya sama dengan bagian "[Cara Mencoba Kode Ini](#cara-mencoba-kode-ini)".
 
 Jadi, silakan baca bagian tersebut dan praktekkan.
+
+## Pembahasan
+
+### File "package.json"
+
+File "package.json" dibuat secara otomatis saat kita menjalankan perintah npm init.
+
+Penambahan parameter -y pada perintah npm init -y menandakan bahwa kita menerima semua jawaban dari pertanyaan npm init sebagai "yes" atau "iya".
+
+Karena kita mendapat file "package.json" default dari perintah tersebut, maka pada bagian "Langkah-Langkah", kita me-replace "package.json" default yang di-generate dengan versi kita sendiri.
+
+Yaitu yang ini:
+
+```
+{
+    "name": "company_profile",
+    "version": "2024.05.28",
+    "main": "app.js",
+    "private": true,
+    "scripts": {
+        "start": "node app.js",
+        "dev": "nodemon -e js,ejs,html -w . -w public -w views -w routes -w models app.js --debug",
+        "db:dev:refresh": "npx knex migrate:rollback --env development --knexfile ./databases/knexfile.js && npx knex migrate:latest --env development --knexfile ./databases/knexfile.js",
+        "db:stg:refresh": "npx knex migrate:rollback --env staging --knexfile ./databases/knexfile.js && npx knex migrate:latest --env staging --knexfile ./databases/knexfile.js",
+        "db:prod:refresh": "npx knex migrate:rollback --env production --knexfile ./databases/knexfile.js && npx knex migrate:latest --env production --knexfile ./databases/knexfile.js"
+    },
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "connect-flash": "^0.1.1",
+        "cookie-parser": "~1.4.6",
+        "dotenv": "^16.0.3",
+        "ejs": "~3.1.9",
+        "express": "~4.18.2",
+        "express-session": "^1.17.3",
+        "http-errors": "~2.0.0",
+        "joi": "^17.9.1",
+        "knex": "^2.4.2",
+        "morgan": "~1.10.0",
+        "multer": "^1.4.3",
+        "mysql2": "^3.2.1",
+        "node-os-utils": "^1.3.7",
+        "session-file-store": "^1.5.0",
+        "sqlite3": "^5.1.6",
+        "uuid": "^9.0.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.22"
+    }
+}
+```
+
+Berikut ini adalah deskripsi dari property-property file "package.json" di atas:
+
+-   "name" adalah nama project kita.
+-   "version" adalah versi project kita.
+-   "main" adalah script yang akan dijalankan Electron saat pertama kali atau bootstrapper-nya.
+-   "private" yang berisi "true" artinya project ini tidak akan dipublikasi di npm.
+-   "scripts" adalah daftar npm script (misal npm run dev) yang tersedia.
+-   "dependencies" adalah daftar package npm yang disertakan di production.
+-   "devDependencies" adalah daftar dependencies yang kita install dengan perintah npm install [nama_package] --save-dev.
+
+#### Script "start"
+
+Script ini akan menjalankan perintah ini di command line:
+
+```
+node app.js
+```
+
+Artinya, file "app.js" akan dijalankan sebagai input dari Node JS.
+
+#### Script "dev"
+
+Script ini akan menjalankan perintah ini di command line:
+
+```
+nodemon -e js,ejs,html -w . -w public -w views -w routes -w models app.js --debug
+```
+
+Artinya, file "app.js" akan dijalankan dengan Nodemon.
+
+Dengan nodemon maka project ini akan di-restart secara otomatis jika file-file atau folder-folder yang memenuhi prasyarat ini:
+
+```
+-e js,ejs,html -w . -w public -w views -w routes -w models app.js --debug
+```
+
+Telah berubah.
+
+Adapun arti dari prasyarat tadi adalah:
+
+-   file ber-extension js, ejs, dan html
+-   folder "public", "views", "routes", "models".
+
+#### Script "db:dev:refresh"
+
+Script ini akan menjalankan perintah ini di command line:
+
+```
+npx knex migrate:rollback --env development --knexfile ./databases/knexfile.js && npx knex migrate:latest --env development --knexfile ./databases/knexfile.js
+```
+
+Artinya, database yang digunakan dalam environment development di project ini akan di-rollback (dihapus) kemudian dibuat ulang.
+
+Dengan kata lain databasenya akan di-refresh.
+
+#### Script "db:stg:refresh"
+
+Sama dengan "db:dev:refresh", tapi untuk environment staging.
+
+#### Script "db:prod:refresh"
+
+Sama dengan "db:dev:refresh", tapi untuk environment production.
 
 ## Bersambung...
