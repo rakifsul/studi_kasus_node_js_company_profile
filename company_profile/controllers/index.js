@@ -16,7 +16,7 @@ module.exports.getIndex = async function (req, res, next) {
         const portfolios = await knex("portfolios");
 
         // render dan kirimkan datanya yang berupa isi tabel
-        res.render("index.ejs", {
+        res.render("index/index.ejs", {
             text: text,
             skills: skills,
             services: services,

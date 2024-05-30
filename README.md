@@ -1,14 +1,14 @@
 # Studi Kasus Node JS Membuat Aplikasi Company Profile
 
 -   [Studi Kasus Node JS Membuat Aplikasi Company Profile](#studi-kasus-node-js-membuat-aplikasi-company-profile)
-    -   [Cara Mencoba Kode Ini](#cara-mencoba-kode-ini)
+    -   [Source Code Project Ini](#source-code-project-ini)
+    -   [Jika Ingin Mentraktir Saya](#jika-ingin-mentraktir-saya)
+    -   [Cara Mencoba Kode Project Ini](#cara-mencoba-kode-project-ini)
         -   [Mencoba Di Environment Development](#mencoba-di-environment-development)
         -   [Mencoba Di Environment Production](#mencoba-di-environment-production)
         -   [Mencoba Di Environment Staging](#mencoba-di-environment-staging)
         -   [Mengunjungi Aplikasi](#mengunjungi-aplikasi)
         -   [Mengubah Favicon](#mengubah-favicon)
-    -   [Source Code Project Ini](#source-code-project-ini)
-    -   [Jika Ingin Mentraktir Saya](#jika-ingin-mentraktir-saya)
     -   [Pendahuluan](#pendahuluan)
     -   [Tujuan](#tujuan)
     -   [Prasyarat](#prasyarat)
@@ -50,10 +50,34 @@
             -   [File "routes/admin.js"](#file-routesadminjs)
         -   [Subfolder "middlewares"](#subfolder-middlewares)
         -   [Subfolder "controllers"](#subfolder-controllers)
+            -   [File "controllers/index.js"](#file-controllersindexjs)
+            -   [File "controllers/auth.js"](#file-controllersauthjs)
+        -   [Penting untuk Diketahui Sebelum Membahas Subfolder "views"](#penting-untuk-diketahui-sebelum-membahas-subfolder-views)
         -   [Subfolder "views"](#subfolder-views)
-    -   [Bersambung...](#bersambung)
+            -   [File "views/\*/layout.ejs"](#file-viewslayoutejs)
+            -   [File "views/admin/index.js.ejs"](#file-viewsadminindexjsejs)
+            -   [File "views/admin/carousels.js.ejs", "views/admin/services.js.ejs", "views/admin/skills.js.ejs", dan "views/admin/portfolios.js.ejs"](#file-viewsadmincarouselsjsejs-viewsadminservicesjsejs-viewsadminskillsjsejs-dan-viewsadminportfoliosjsejs)
+            -   [File "public/js/auth.js", "views/auth/login.js.ejs", "views/auth/register.js.ejs"](#file-publicjsauthjs-viewsauthloginjsejs-viewsauthregisterjsejs)
+            -   [Lalu Mana File "views/index/index.js.ejs"?](#lalu-mana-file-viewsindexindexjsejs)
+    -   [Penutup](#penutup)
 
-## Cara Mencoba Kode Ini
+## Source Code Project Ini
+
+Source code project ini ada di folder "company_profile".
+
+## Jika Ingin Mentraktir Saya
+
+Artikel ini gratis.
+
+Jika Anda ingin mentraktir saya, kunjungi link saya:
+
+https://taplink.cc/rakifsul
+
+Di sana ada link untuk mentraktir saya dan link lainnya.
+
+Selamat menikmati.
+
+## Cara Mencoba Kode Project Ini
 
 Sekarang, saya akan membahas cara mencoba kode ini di komputer lokal dengan sistem operasi Windows 11.
 
@@ -180,22 +204,6 @@ password: admin
 ### Mengubah Favicon
 
 Untuk mengubah favicon di halaman depan, replace favicon.png yang ada di folder "/public/img" yang ada di dalam folder source code.
-
-## Source Code Project Ini
-
-Source code project ini ada di folder "company_profile".
-
-## Jika Ingin Mentraktir Saya
-
-Artikel ini gratis.
-
-Jika Anda ingin mentraktir saya, kunjungi link saya:
-
-https://taplink.cc/rakifsul
-
-Di sana ada link untuk mentraktir saya dan link lainnya.
-
-Selamat menikmati.
 
 ## Pendahuluan
 
@@ -3869,6 +3877,1152 @@ Jika ya, maka redirect ke halaman admin:
 
 ### Subfolder "controllers"
 
+Subfolder ini berisi controller yang tidak lain adalah fungsi yang menangani route.
+
+Di controller, query-query database dilakukan dan hasilnya akan menjadi input bagi view melalui proses rendering.
+
+Controller memiliki 3 file script berikut ini:
+
+-   admin.js
+-   auth.js
+-   index.js
+
+#### File "controllers/index.js"
+
+File ini diimpor di "routes/index.js" dan fungsi dijadikan input bagi event routing-nya seperti get dan post.
+
+Script ini dimulai dengan impor modul:
+
+```
+// begin: import modules
+const createError = require("http-errors");
+const knex = require("../databases/connection");
+// end: import modules
+```
+
+Method ini akan me-render home page:
+
+```
+// merender homepage
+module.exports.getIndex = async function (req, res, next) {
+    try {
+        // ambil isi masing-masing tabel dan simpan ke variabel
+        const text = await knex("texts").first();
+        const skills = await knex("skills");
+        const services = await knex("services");
+        const carousels = await knex("carousels");
+        const portfolios = await knex("portfolios");
+
+        // render dan kirimkan datanya yang berupa isi tabel
+        res.render("index.ejs", {
+            text: text,
+            skills: skills,
+            services: services,
+            carousels: carousels,
+            portfolios: portfolios,
+        });
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+```
+
+Kode ini meminta data dari database:
+
+```
+        // ambil isi masing-masing tabel dan simpan ke variabel
+        const text = await knex("texts").first();
+        const skills = await knex("skills");
+        const services = await knex("services");
+        const carousels = await knex("carousels");
+        const portfolios = await knex("portfolios");
+```
+
+Untuk nantinya akan dijadikan sebagai input bagi view saat di-render:
+
+```
+        // render dan kirimkan datanya yang berupa isi tabel
+        res.render("index.ejs", {
+            text: text,
+            skills: skills,
+            services: services,
+            carousels: carousels,
+            portfolios: portfolios,
+        });
+```
+
+Adapun view yang di-render adalah "views/index/index.ejs".
+
+#### File "controllers/auth.js"
+
+File ini diimpor di "routes/auth.js" untuk nantinya digunakan sebagai definisi callback dari fungsi routing.
+
+Script ini dimulai dengan mengimpor modul yang dibutuhkan:
+
+```
+// begin: import modules
+const createError = require("http-errors");
+const bcrypt = require("bcryptjs");
+const Joi = require("joi");
+const knex = require("../databases/connection");
+// end: import modules
+```
+
+Modul "http-errors" digunakan untuk membuat halaman error tergantung error code-nya.
+
+Modul "bcryptjs" digunakan untuk membuat hash dari input password.
+
+Modul "joi" digunakan untuk validasi input di sisi server.
+
+Modul "../databases/connection" adalah objek knex siap pakai yang nantinya digunakan untuk membuat query ke database.
+
+Fungsi ini akan mengambil data dari database kemudian menjadikannya input untuk proses render halaman login:
+
+```
+// render halaman login
+module.exports.getLogin = async function (req, res, next) {
+    try {
+        // ambil data tabel texts
+        const text = await knex("texts").first();
+
+        // render dan kirim data tadi ke front end
+        res.render("auth/layout.ejs", {
+            child: "auth/login.ejs",
+            clientScript: "auth/login.js.ejs",
+            data: {
+                text: text,
+                errors: req.flash("errors"),
+            },
+        });
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+```
+
+Data yang di-query di sini akan berisi informasi seputar SEO:
+
+```
+        // ambil data tabel texts
+        const text = await knex("texts").first();
+```
+
+Seperti yang telah disinggung pada pembahasan sebelumnya tentang script migrasi:
+
+```
+// file: "databases/migrations/20230316035229_init.js"
+              return knex("texts").insert([
+                {
+                    siteTitle: "Company Name",
+                    siteSEOTitle: "Company Name - A leading software development agency...",
+                    siteDescription: "Company Name is a leading software development agency...",
+                    siteSEODescription: "Company Name is a leading software development agency...",
+                    aboutSubHeading: "Why?",
+                    aboutSubText: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit magnam ad doloremque illum iure repellat vero neque dolore consectetur, quidem corporis tenetur perspiciatis mollitia quos nemo architecto! Veniam facilis nesciunt, dignissimos in officia tempora repellat autem ipsum, nostrum accusamus aliquid reiciendis inventore quos aperiam voluptates debitis magni sit laborum obcaecati possimus necessitatibus quasi adipisci ducimus? Adipisci enim accusantium, dignissimos quae asperiores eaque tempore reprehenderit? Quaerat blanditiis sint rerum accusamus aspernatur provident sunt libero quibusdam totam. Magnam doloribus nisi, quas eligendi quasi modi, velit alias nulla quae animi excepturi officiis, ipsam voluptatum? Maxime reprehenderit tenetur facilis, unde obcaecati ratione id magni!",
+                    infoSubHeading: "Our Office",
+                    address: "Jl. Some Street No. 15, Some City, Some Province, Some Country",
+                    phone: "(021) yyy-xxxx",
+                    email: "admin@example.com",
+                },
+            ]);
+```
+
+Selanjutnya, proses render dilakukan:
+
+```
+        // render dan kirim data tadi ke front end
+        res.render("auth/layout.ejs", {
+            child: "auth/login.ejs",
+            clientScript: "auth/login.js.ejs",
+            data: {
+                text: text,
+                errors: req.flash("errors"),
+            },
+        });
+```
+
+Perlu Anda perhatikan bagian ini:
+
+```
+            child: "auth/login.ejs",
+            clientScript: "auth/login.js.ejs",
+```
+
+Ada 2 input file view yang berekstensi "ejs".
+
+File "auth/login.ejs" adalah bagian HTML-nya.
+
+File "auth/login.js.ejs" adalah bagian script JavaScript yang ada di bagian footer-nya.
+
+Selain itu, bagian ini:
+
+```
+            data: {
+                text: text,
+                errors: req.flash("errors"),
+            },
+```
+
+Adalah transfer data text (yang berisi info seputar SEO) dan pesan error jika ada.
+
+Sekarang, saya akan membahas fungsi postLogin-nya:
+
+```
+// handle form login
+module.exports.postLogin = async function (req, res, next) {
+    // validasi request body
+    const schema = Joi.object({
+        email: Joi.string().required(),
+        password: Joi.string().required(),
+    });
+
+    const validObj = schema.validate(req.body);
+    if (validObj.error) {
+        // jika ada error dalam request body
+
+        // buat pesan error flash
+        req.flash("errors", validObj.error.details);
+        res.status(422).redirect("/auth/login");
+        res.end();
+        return;
+    }
+
+    // bongkar request body
+    const { email, password } = req.body;
+
+    try {
+        // ambil admin dari tabel admins yang emailnya adalah email dari request body tadi
+        const admin = await knex("admins").where({ email: email }).first();
+
+        if (admin) {
+            // jika admin tadi ada
+
+            if (email == admin.email) {
+                // jika email dari request body sama dengan yang di tabel
+
+                // bandingkan passwordnya
+                if (bcrypt.compareSync(password, admin.password) == true) {
+                    // jika password sama
+
+                    // masukkan data-data ini ke session
+                    req.session.isLoggedIn = true;
+                    req.session.admin = admin;
+                    req.session.save();
+
+                    // redirect ke halaman admin
+                    res.redirect("/admin");
+                } else {
+                    // jika password beda
+
+                    // redirect ke halaman login
+                    res.redirect("/auth/login");
+                }
+            } else {
+                // jika email dari request body beda dengan yang di tabel
+
+                // redirect ke halaman login
+                res.redirect("/auth/login");
+            }
+        } else {
+            // jika admin tidak ada
+
+            // redirect ke halaman login
+            res.redirect("/auth/login");
+        }
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+```
+
+Fungsi di atas adalah untuk menangani request post yang dikirim dari view melalui form tag karena pada "views/auth/login.ejs", ada kode ini:
+
+```
+<form action="/auth/login" method="POST">
+```
+
+Komentar kode di atas cukup menjelaskan secara rinci menurut saya.
+
+Itu adalah algoritma yang cukup umum untuk keperluan login.
+
+Serupa dengan kode tadi, method getRegister untuk merender form, dan postRegister untuk menangani request post dari form tersebut.
+
+Sekarang, saya akan membahas tentang "controllers/admin.js".
+
+Kodenya begini:
+
+```
+// script ini akan dipanggil di routes/admin.js
+
+const bcrypt = require("bcryptjs");
+const fs = require("fs");
+const createError = require("http-errors");
+const osu = require("node-os-utils");
+const knex = require("../databases/connection");
+
+// render halaman admin index
+module.exports.getIndex = async function (req, res, next) {
+    try {
+        // ambil data text pertama dari tabel texts
+        const text = await knex("texts").first();
+
+        // render dan kirimkan data tadi ke front end
+        res.render("admin/layout.ejs", {
+            child: "admin/index.ejs",
+            clientScript: "admin/index.js.ejs",
+            data: {
+                text: text,
+            },
+        });
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// dapatkan data penggunaan CPU
+module.exports.getCPUUsage = async function (req, res, next) {
+    osu.cpu.usage().then((cpuPercentage) => {
+        res.status(200).json({
+            name: "CPU Usage",
+            value: cpuPercentage,
+        });
+    });
+};
+
+// dapatkan data penggunaan memory
+module.exports.getMemoryUsage = function (req, res) {
+    osu.mem.used().then((memUsed) => {
+        res.status(200).json({
+            name: "Memory Usage",
+            value: (memUsed.usedMemMb / memUsed.totalMemMb) * 100,
+        });
+    });
+};
+
+// render halaman settings
+module.exports.getSettings = async function (req, res) {
+    try {
+        // ambil data text pertama dari tabel texts
+        const text = await knex("texts").first();
+
+        // render dan kirimkan data tadi ke front end
+        res.render("admin/layout", {
+            child: "admin/settings.ejs",
+            clientScript: "admin/settings.js.ejs",
+            data: {
+                adminEmail: req.session.admin.email,
+                text: text,
+                errors: req.flash("errors"),
+            },
+        });
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// handle edit settings
+module.exports.postSettingsEdit = async function (req, res, next) {
+    try {
+        // bongkar request body
+        const { email, password } = req.body;
+
+        if (password && email) {
+            // jika password dan email ada
+
+            // update data admin
+            const ret = await knex("admins")
+                .where({ email: req.session.admin.email })
+                .update({
+                    email: email,
+                    password: bcrypt.hashSync(password, 12),
+                });
+        } else if (email) {
+            // jika hanya email yang ada
+
+            // update data admin
+            const ret = await knex("admins").where({ email: req.session.admin.email }).update({
+                email: email,
+            });
+        }
+
+        // redirect ke settings
+        res.redirect("/admin/settings");
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// render halaman messages
+module.exports.getMessagesIndex = async function (req, res) {
+    try {
+        // ambil data text pertama dari tabel texts
+        const text = await knex("texts").first();
+
+        // ambil data messages dari tabel messages
+        const messages = await knex("messages");
+
+        // render dan kirimkan data tadi ke front end
+        res.render("admin/layout", {
+            child: "admin/messages.ejs",
+            clientScript: "admin/messages.js.ejs",
+            data: {
+                text: text,
+                results: messages,
+            },
+        });
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// handle delete message
+module.exports.getMessagesDelete = async function (req, res, next) {
+    try {
+        // delete message yang id-nya adalah req.params.id
+        // atau dengan kata lain
+        // yang id-nya sama dengan yang ada di URL
+        await knex("messages")
+            .where({
+                _id: req.params.id,
+            })
+            .del();
+
+        // redirect ke messages
+        res.redirect("/admin/messages");
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// render halaman texts
+module.exports.getTextsIndex = async function (req, res) {
+    try {
+        // ambil data text pertama dari tabel texts
+        const text = await knex("texts").first();
+
+        // render dan kirimkan data tadi ke front end
+        res.render("admin/layout", {
+            child: "admin/texts.ejs",
+            clientScript: "admin/texts.js.ejs",
+            data: {
+                adminEmail: req.session.admin.email,
+                text: text,
+                errors: req.flash("errors"),
+            },
+        });
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// handle edit data dari tabel texts
+module.exports.postTextsEdit = async function (req, res, next) {
+    try {
+        // ambil data text pertama dari tabel texts
+        const target = await knex("texts").first();
+
+        // update data tersebut
+        const ret = await knex("texts").where({ _id: target._id }).update({
+            siteTitle: req.body.siteTitle,
+            siteSEOTitle: req.body.siteSEOTitle,
+            siteDescription: req.body.siteDescription,
+            siteSEODescription: req.body.siteSEODescription,
+            aboutSubHeading: req.body.aboutSubHeading,
+            aboutSubText: req.body.aboutSubText,
+            infoSubHeading: req.body.infoSubHeading,
+            address: req.body.address,
+            phone: req.body.phone,
+            email: req.body.email,
+        });
+
+        // redirect ke halaman texts
+        res.redirect("/admin/texts");
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// render halaman skills
+module.exports.getSkillsIndex = async function (req, res, next) {
+    try {
+        // ambil data text pertama dari tabel texts
+        const text = await knex("texts").first();
+
+        // ambil data skills dari tabel skills
+        const allSkills = await knex("skills");
+
+        // render dan kirim data tersebut ke front end
+        res.render("admin/layout.ejs", {
+            child: "admin/skills.ejs",
+            clientScript: "admin/skills.js.ejs",
+            data: {
+                results: allSkills,
+                text: text,
+            },
+        });
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// handle penambahan skill
+module.exports.postSkillsAdd = async function (req, res, next) {
+    try {
+        // bongkar request body
+        const { title, level } = req.body;
+
+        // insert skill baru, judul dan levelnya
+        const skillId = await knex("skills").insert({
+            title: title,
+            level: level,
+        });
+
+        // redirect ke halaman skills
+        res.redirect("/admin/skills");
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// handle delete skill
+module.exports.getSkillsDelete = async function (req, res, next) {
+    try {
+        // delete skill yang id-nya adalah req.params.id
+        // atau dengan kata lain
+        // yang id-nya sama dengan yang ada di URL
+        await knex("skills")
+            .where({
+                _id: req.params.id,
+            })
+            .del();
+
+        // redirect ke halaman skills
+        res.redirect("/admin/skills");
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// render halaman services
+module.exports.getServicesIndex = async function (req, res, next) {
+    try {
+        // ambil data text pertama dari tabel texts
+        const text = await knex("texts").first();
+
+        // ambil data services dari tabel services
+        const allServices = await knex("services");
+
+        // render dan kirim data tersebut ke front end
+        res.render("admin/layout.ejs", {
+            child: "admin/services.ejs",
+            clientScript: "admin/services.js.ejs",
+            data: {
+                results: allServices,
+                text: text,
+            },
+        });
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// handle tambah service
+module.exports.postServicesAdd = async function (req, res, next) {
+    try {
+        // bongkar request body
+        const { title, description, svg } = req.body;
+
+        // insert service baru, judul, deskripsi, dan svg nya
+        const serviceId = await knex("services").insert({
+            title: title,
+            description: description,
+            svg: svg,
+        });
+
+        // redirect ke halaman services
+        res.redirect("/admin/services");
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// handle delete service
+module.exports.getServicesDelete = async function (req, res, next) {
+    try {
+        // delete service yang id-nya adalah req.params.id
+        // atau dengan kata lain
+        // yang id-nya sama dengan yang ada di URL
+        await knex("services")
+            .where({
+                _id: req.params.id,
+            })
+            .del();
+
+        // redirect ke halaman services
+        res.redirect("/admin/services");
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// render halaman carousel
+module.exports.getCarouselsIndex = async function (req, res, next) {
+    try {
+        // ambil data text pertama dari tabel texts
+        const text = await knex("texts").first();
+
+        // ambil data carousels dari tabel carousels
+        const allCarousels = await knex("carousels");
+
+        // render dan kirim data tadi ke front end
+        res.render("admin/layout.ejs", {
+            child: "admin/carousels.ejs",
+            clientScript: "admin/carousels.js.ejs",
+            data: {
+                results: allCarousels,
+                text: text,
+            },
+        });
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// handle upload gambar carousel
+module.exports.postCarouselsUpload = async function (req, res, next) {
+    try {
+        if (req.file) {
+            // jika request file ada, yang artinya gambar diupload
+
+            // bongkar request body
+            const { title, description } = req.body;
+
+            // insert carousel baru, judul, deskripsi, dan path dari file gambarnya
+            const fileId = await knex("carousels").insert({
+                title: title,
+                description: description,
+                path: req.file.path.replace("\\", "/"),
+            });
+        }
+
+        // redirect ke halaman carousels
+        res.redirect("/admin/carousels");
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// handle delete carousel
+module.exports.getCarouselsDelete = async function (req, res, next) {
+    try {
+        // dapatkan dulu datanya
+        const willBeDeleted = await knex("carousels").where({
+            _id: req.params.id,
+        });
+
+        // delete carousel yang id-nya adalah req.params.id
+        // atau dengan kata lain
+        // yang id-nya sama dengan yang ada di URL
+        // ini yang di database
+        await knex("carousels")
+            .where({
+                _id: req.params.id,
+            })
+            .del();
+
+        // hapus file nya
+        // ini yang di folder upload
+        fs.unlinkSync("./" + willBeDeleted[0].path);
+
+        // redirect ke halaman carousels
+        res.redirect("/admin/carousels");
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// render halaman portfolios
+module.exports.getPortfoliosIndex = async function (req, res, next) {
+    try {
+        // ambil data text pertama dari tabel texts
+        const text = await knex("texts").first();
+
+        // ambil data portfolios dari tabel portfolios
+        const allPortfolios = await knex("portfolios");
+
+        // render dan kirim data tadi ke front end
+        res.render("admin/layout.ejs", {
+            child: "admin/portfolios.ejs",
+            clientScript: "admin/portfolios.js.ejs",
+            data: {
+                results: allPortfolios,
+                text: text,
+            },
+        });
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// handle upload gambar portfolio
+module.exports.postPortfoliosUpload = async function (req, res, next) {
+    try {
+        if (req.file) {
+            // jika request file ada, yang artinya gambar diupload
+
+            // bongkar request body
+            const { title } = req.body;
+
+            // insert portfolio baru, judul, dan path dari file gambarnya
+            const fileId = await knex("portfolios").insert({
+                title: title,
+                path: req.file.path.replace("\\", "/"),
+            });
+        }
+
+        // redirect ke halaman portfolios
+        res.redirect("/admin/portfolios");
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+
+// handle delete portfolio
+module.exports.getPortfoliosDelete = async function (req, res, next) {
+    try {
+        // dapatkan dulu datanya
+        const willBeDeleted = await knex("portfolios").where({
+            _id: req.params.id,
+        });
+
+        // delete portfolio yang id-nya adalah req.params.id
+        // atau dengan kata lain
+        // yang id-nya sama dengan yang ada di URL
+        // ini yang di database
+        await knex("portfolios")
+            .where({
+                _id: req.params.id,
+            })
+            .del();
+
+        // hapus file nya
+        // ini yang di folder upload
+        fs.unlinkSync("./" + willBeDeleted[0].path);
+
+        // redirect ke halaman portfolios
+        res.redirect("/admin/portfolios");
+    } catch (err) {
+        console.log(err);
+        next(createError(500));
+    }
+};
+```
+
+Panjang sekali, ya...
+
+Saya tidak tertarik untuk menulis ulang penjelasan kode tadi, karena komentarnya juga cukup jelas dan banyak.
+
+Kecuali pada kedua hal terkait modul-modul ini:
+
+```
+const fs = require("fs");
+```
+
+Dan
+
+```
+const osu = require("node-os-utils");
+```
+
+Selain kedua hal tersebut, apa yang dilakukan oleh script "controllers/admin.js" adalah hanya create, read, update, dan delete.
+
+Modul "fs" digunakan nantinya untuk menghapus file gambar yang telah di-upload. Bukan dari database, tapi dari filesystem.
+
+Kita menggunakan database untuk menyimpan data tentang file, tapi file-nya itu sendiri disimpan pada filesystem, dalam hal ini folder "uploads".
+
+Jadi kode ini:
+
+```
+fs.unlinkSync("./" + willBeDeleted[0].path);
+```
+
+Akan menghapus file gambar dari filesystem.
+
+Anda akan mendapati dua implementasi tadi karena dalam company profile ada gambar carousel dan ada gambar portfolio.
+
+Sekarang tentang modul "node-os-utils" yang disimpan dalam variabel "osu":
+
+```
+// dapatkan data penggunaan CPU
+module.exports.getCPUUsage = async function (req, res, next) {
+    osu.cpu.usage().then((cpuPercentage) => {
+        res.status(200).json({
+            name: "CPU Usage",
+            value: cpuPercentage,
+        });
+    });
+};
+
+// dapatkan data penggunaan memory
+module.exports.getMemoryUsage = function (req, res) {
+    osu.mem.used().then((memUsed) => {
+        res.status(200).json({
+            name: "Memory Usage",
+            value: (memUsed.usedMemMb / memUsed.totalMemMb) * 100,
+        });
+    });
+};
+```
+
+Fungsi-fungsi di atas digunakan karena pada halaman dashboard admin ada dua chart yang menampilkan penggunaan resource dari server.
+
+Yang pertama adalah penggunaan CPU dan yang kedua adalah penggunaan memory.
+
+Kedua fungsi tadi dipanggil dari client melalui ajax dalam interval tertentu.
+
+Jadi, itu dipanggil via JavaScript browser dari sisi client.
+
+Dan ingat, pemanggilan itu hanya dilakukan dari view yang menjalankan JavaScript di halaman dashboard admin saja, yakni "views/admin/index.js.ejs". bukan dari "views/admin/index.ejs".
+
+### Penting untuk Diketahui Sebelum Membahas Subfolder "views"
+
+Mungkin ada di antara pembaca yang bingung setelah pembahasan saya sampai di sini.
+
+View merupakan file yang ada di server, tapi kenapa ada pemanggilan ajax di sisi client?
+
+Sebenarnya alasannya sederhana dan ini soal prinsip.
+
+Folder "views" memang ada di server.
+
+Akan tetapi hasil render dengan ketentuan file-file ejs yang ada di "views" nantinya akan diterima client berupa HTML yang sudah diproses.
+
+Jadi, HTML itulah yang memiliki JavaScript dan JavaScript tersebut melakukan fungsi ajax untuk meminta request ke server.
+
 ### Subfolder "views"
 
-## Bersambung...
+Sekarang mungkin Anda sudah tidak bingung setelah penjelasan di subbab sebelum ini.
+
+Oleh karena itu, saya akan membahas sisanya.
+
+Penting untuk diketahui bahwa saya tidak akan membahas semua file .ejs yang ada.
+
+Itu karena akan sangat panjang.
+
+Jadi saya bahas yang penting-penting saja, terutama untuk file yang berekstensi "\*.js.ejs".
+
+#### File "views/\*/layout.ejs"
+
+Sekarang kita mulai dari "layout.ejs" yang ada di dua tempat berbeda:
+
+-   admin/layout.ejs
+-   auth/layout.ejs
+
+Kedua file tadi beda isinya, tapi ada kesamaan:
+
+```
+<!-- file "auth/layout.ejs" -->
+
+<% include ("../helper") %>
+    <%- include("../" + child, {data: data}); %>
+
+<!-- sesuatu di antaranya -->
+
+    <%- include("../" + clientScript, {data: data}); %>
+```
+
+```
+<!-- file "admin/layout.ejs" -->
+
+<% include ("../helper") %>
+
+      <%- include("../" + child, {data: data}); %>
+
+<!-- sesuatu di antaranya -->
+
+      <%- include("../" + clientScript, {data: data}); %>
+```
+
+Keduanya memiliki kode di atas di bagian tengahnya.
+
+Simbol "<% sesuatu %>" dan "<%- sesuatu %>" itu adalah ciri khas template engine EJS.
+
+Artinya dengan simbol tadi, operasi logika rendering dari EJS yang ada di antara simbol tadi akan dijalankan.
+
+Dengan fungsi include maka "views/helper.ejs" akan disertakan:
+
+```
+<%
+generateExcerpt = function(wholeText) {
+    var strLen = wholeText.length;
+    if (strLen < 100) {
+        return wholeText.substring(0, strLen).replace(/<[^(^(>)]*>?/gm, '');
+    }
+    return wholeText.substring(0, 100).replace(/<[^(^(>)]*>?/gm, '');
+}
+
+isOptionSelected = function (val, valDB) {
+    return val == valDB ? "selected" : "";
+}
+
+pgnPrevious = function (currentPage) {
+    let tmp = currentPage - 1;
+    return tmp < 0 ? { index: 0, disabled: true } : { index: tmp, disabled: false };
+}
+
+pgnNext = function (currentPage, totalPage) {
+    let tmp = currentPage + 1;
+    return tmp >= totalPage ? { index: currentPage, disabled: true } : { index: tmp, disabled: false };
+}
+%>
+```
+
+Kode di atas isinya adalah fungsi untuk membantu pemrosesan view dari template mentah ke HTML jadi.
+
+Kodenya menyerupai JavaScript, tapi mungkin Anda tidak bisa menggunakan fungsi dalam konteks web browser, karena script tersebut dijalankan di sisi server.
+
+Beda lagi dengan JavaScript yang ada di "\*.js.ejs" setelah diterima di sisi client.
+
+Selain itu, dengan fungsi include maka ""../" + child, {data: data}" juga akan disertakan:
+
+```
+<%- include("../" + child, {data: data}); %>
+```
+
+Variabel "child" adalah nama file ".ejs" yang diinputkan pada fungsi render di controller yang telah saya bahas tadi.
+
+Jika lupa, ini contohnya:
+
+```
+// file: "controllers/admin.js"
+
+        // render dan kirimkan data tadi ke front end
+        res.render("admin/layout.ejs", {
+            child: "admin/index.ejs",
+            clientScript: "admin/index.js.ejs",
+            data: {
+                text: text,
+            },
+        });
+```
+
+Yang ini misalnya:
+
+```
+child: "admin/index.ejs",
+```
+
+Adapun variabel clientScript seperti di sini:
+
+```
+<%- include("../" + clientScript, {data: data}); %>
+```
+
+Akan dimasukkan file "\*.js.ejs":
+
+```
+clientScript: "admin/index.js.ejs",
+```
+
+Jika Anda perhatikan posisinya, mungkin Anda akan paham bahwa itu ada di bagian footer atau bawah.
+
+Tujuannya agar script JavaScript-nya diproses di akhir.
+
+#### File "views/admin/index.js.ejs"
+
+Karena di bagian dashboard admin ada 2 pie chart, maka kode ini diterapkan:
+
+```
+<script>
+    var configCPUUsagePie = {
+        type: 'pie',
+        data: {
+            labels: [
+                "CPU Used",
+                "CPU Free"
+            ],
+            datasets: [{
+                data: [100, 50],
+                backgroundColor: [
+                    "#FF6384",
+                    "#36A2EB"
+                ],
+                hoverBackgroundColor: [
+                    "#FF6384",
+                    "#36A2EB"
+                ]
+            }]
+        }
+    };
+
+    var cpuUsageChartPie = new Chart(
+        document.getElementById("cpuUsageChartPie").getContext("2d"),
+        configCPUUsagePie
+    );
+
+    setInterval(function () {
+        $.get("/admin/cpu-usage", function (data) {
+            configCPUUsagePie.data.datasets[0].data[0] = data.value;
+            configCPUUsagePie.data.datasets[0].data[1] = (100 - data.value);
+            cpuUsageChartPie.update();
+        });
+    }, 1000);
+
+    var configMemoryUsagePie = {
+        type: 'pie',
+        data: {
+            labels: [
+                "Memory Used",
+                "Memory Free"
+            ],
+            datasets: [{
+                data: [100, 50],
+                backgroundColor: [
+                    "#FF6384",
+                    "#36A2EB"
+                ],
+                hoverBackgroundColor: [
+                    "#FF6384",
+                    "#36A2EB"
+                ]
+            }]
+        }
+    };
+
+    var memoryUsageChartPie = new Chart(
+        document.getElementById("memoryUsageChartPie").getContext("2d"),
+        configMemoryUsagePie
+    );
+
+    setInterval(function () {
+        let self = this;
+        $.get("/admin/memory-usage", function (data) {
+            configMemoryUsagePie.data.datasets[0].data[0] = data.value;
+            configMemoryUsagePie.data.datasets[0].data[1] = 100 - data.value;
+            memoryUsageChartPie.update();
+        });
+
+    }, 1000);
+</script>
+```
+
+#### File "views/admin/carousels.js.ejs", "views/admin/services.js.ejs", "views/admin/skills.js.ejs", dan "views/admin/portfolios.js.ejs"
+
+File ini digunakan untuk meng-handle event click pada tombol upload di admin area.
+
+Tepatnya di bagian carousels dan portfolios.
+
+```
+<script>
+  $("#btn-upload-file").click(function() {
+    let addModal = new bootstrap.Modal(document.getElementById("modal-add"), {
+      backdrop: 'static',
+      keyboard: false
+    });
+    addModal.show();
+  });
+</script>
+```
+
+Dengan demikian modal dialog akan muncul pada saat tombol upload diklik.
+
+#### File "public/js/auth.js", "views/auth/login.js.ejs", "views/auth/register.js.ejs"
+
+File-file views di folder auth sedikit berbeda.
+
+Itu karena mereka memiliki dependency dengan file statis JavaScript di folder "public".
+
+Tepatnya di "public/js/auth.js":
+
+```
+// untuk menampilkan modal login dan register
+function showAuthModal(elmID) {
+    let authModal = new bootstrap.Modal(document.getElementById(elmID), { backdrop: "static", keyboard: false });
+    authModal.show();
+}
+```
+
+Nanti di "views/auth/login.js.ejs" dan "views/auth/register.js.ejs" kode di atas akan dipanggil:
+
+```
+<!-- file: "views/auth/login.js.ejs" -->
+<script>
+    showAuthModal("loginModal");
+</script>
+```
+
+```
+<!-- file: "views/auth/register.js.ejs" -->
+<script>
+    showAuthModal("registerModal");
+</script>
+```
+
+#### Lalu Mana File "views/index/index.js.ejs"?
+
+File "views/index/index.js.ejs" tidak ada, karena saya tidak membuatnya.
+
+Alasannya, saya ingin memberikan 2 cara berbeda untuk mengangani file JavaScript dari server:
+
+-   dengan cara yang memungkinkan dinamis (pada pembahasan sebelum ini)
+-   dengan cara statis
+
+Kode yang ada di "index.ejs" ini juga tadinya ada di server (di file "views/index/index.ejs"), tapi tidak bisa diubah oleh server secara wajar:
+
+```
+<script>
+    $(document).ready(function() {
+      console.log(location.pathname)
+      $(`a[href*='${location.pathname}']`).addClass("active");
+
+      $("#current-year").text(new Date().getFullYear().toString())
+    });
+  </script>
+```
+
+Karena itu di "controllers/index.js":
+
+```
+// render dan kirimkan datanya yang berupa isi tabel
+        res.render("index/index.ejs", {
+            text: text,
+            skills: skills,
+            services: services,
+            carousels: carousels,
+            portfolios: portfolios,
+        });
+```
+
+Tidak ada variabel "clientScript" seperti yang lainnya.
+
+## Penutup
+
+Artikel ini sangat panjang...
+
+Tapi dengan itu, saya berharap Anda bisa lebih paham tentang kode yang saya tulis.
+
+Sekarang, giliran Anda untuk mencoba memahami lebih dalam tentang kode project company profile ini dengan membaca kodenya sambil mencari info lebih lengkap lagi.
+
+Entah itu melalui dokumentasi, search engine, ai chatbot, dan lain-lain.
+
+Sekian...
