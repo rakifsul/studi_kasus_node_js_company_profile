@@ -4763,7 +4763,7 @@ Kedua file tadi beda isinya, tapi ada kesamaan:
       <%- include("../" + clientScript, {data: data}); %>
 ```
 
-Keduanya memiliki kode di atas di bagian tengahnya.
+Keduanya memiliki kode di atas.
 
 Simbol "<% sesuatu %>" dan "<%- sesuatu %>" itu adalah ciri khas template engine EJS.
 
