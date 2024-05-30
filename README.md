@@ -4930,7 +4930,7 @@ Karena di bagian dashboard admin ada 2 pie chart, maka kode ini diterapkan:
 
 File ini digunakan untuk meng-handle event click pada tombol upload di admin area.
 
-Tepatnya di bagian carousels dan portfolios.
+Tepatnya di bagian carousels, services, skills, dan portfolios.
 
 ```
 <script>
