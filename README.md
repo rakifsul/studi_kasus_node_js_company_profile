@@ -5023,6 +5023,6 @@ Tapi dengan itu, saya berharap Anda bisa lebih paham tentang kode yang saya tuli
 
 Sekarang, giliran Anda untuk mencoba memahami lebih dalam tentang kode project company profile ini dengan membaca kodenya sambil mencari info lebih lengkap lagi.
 
-Entah itu melalui dokumentasi, search engine, ai chatbot, dan lain-lain.
+Entah itu melalui dokumentasi, search engine, AI chatbot, dan lain-lain.
 
 Sekian...
