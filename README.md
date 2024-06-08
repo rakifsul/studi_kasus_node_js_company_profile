@@ -2,7 +2,7 @@
 
 -   [Studi Kasus Node JS Membuat Aplikasi Company Profile](#studi-kasus-node-js-membuat-aplikasi-company-profile)
     -   [Source Code Project Ini](#source-code-project-ini)
-    -   [Jika Ingin Mentraktir Saya](#jika-ingin-mentraktir-saya)
+    -   [Link Penting](#link-penting)
     -   [Cara Mencoba Kode Project Ini](#cara-mencoba-kode-project-ini)
         -   [Mencoba Di Environment Development](#mencoba-di-environment-development)
         -   [Mencoba Di Environment Production](#mencoba-di-environment-production)
@@ -65,15 +65,17 @@
 
 Source code project ini ada di folder "company_profile".
 
-## Jika Ingin Mentraktir Saya
+## Link Penting
 
-Artikel ini gratis.
+Kunjungi juga link saya.
 
-Jika Anda ingin mentraktir saya, kunjungi link saya:
+Link untuk traktir atau beli produk saya:
 
-https://taplink.cc/rakifsul
+-   https://karyakarsa.com/rakifsul
 
-Di sana ada link untuk mentraktir saya dan link lainnya.
+Link selengkapnya:
+
+-   https://taplink.cc/rakifsul
 
 Selamat menikmati.
 
