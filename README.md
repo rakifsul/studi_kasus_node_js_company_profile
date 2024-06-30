@@ -67,7 +67,7 @@ Source code project ini ada di folder "company_profile".
 
 ## Link untuk Traktir
 
--   https://karyakarsa.com/rakifsul
+-   https://karyakarsa.com/rakifsul/info
 
 ## Cara Mencoba Kode Project Ini
 
