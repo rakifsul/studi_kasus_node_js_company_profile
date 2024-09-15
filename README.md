@@ -2,7 +2,7 @@
 
 - [Studi Kasus Node JS Membuat Aplikasi Company Profile](#studi-kasus-node-js-membuat-aplikasi-company-profile)
   - [Source Code Project Ini](#source-code-project-ini)
-  - [Link untuk Traktir](#link-untuk-traktir)
+  - [Freelance Worker Link](#freelance-worker-link)
   - [Cara Mencoba Kode Project Ini](#cara-mencoba-kode-project-ini)
     - [Mencoba Di Environment Development](#mencoba-di-environment-development)
     - [Mencoba Di Environment Production](#mencoba-di-environment-production)
@@ -65,9 +65,9 @@
 
 Source code project ini ada di folder "company_profile".
 
-## Link untuk Traktir
+## Freelance Worker Link
 
--   https://karyakarsa.com/rakifsul/info
+- https://projects.co.id/public/browse_users/view/99bc11/rakifsul
 
 ## Cara Mencoba Kode Project Ini
 
